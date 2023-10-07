@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "name": "digital_library",
+  "description": "A web-based digital library that stores and tracks books and reading activity.",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/130oclock/digital_Library.git"
+  },
+  "author": "Aidan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/130oclock/digital_Library/issues"
+  },
+  "homepage": "https://github.com/130oclock/digital_Library#readme"
+}
