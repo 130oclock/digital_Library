@@ -75,6 +75,10 @@ body {
     font-weight: bold;
 }
 
+.content-table thead th {
+    min-width: 20px;
+}
+
 .content-table th,
 .content-table td {
     padding: 12px 15px;
@@ -94,6 +98,27 @@ body {
 }
 
 .content-table tbody tr:hover {
-    font-weight: bold;
     color: var(--accent-color);
+}
+
+.table-sortable th {
+    cursor: pointer;
+}
+
+.table-sortable .th-sort-asc::after {
+    content: "\25b4";
+}
+
+.table-sortable .th-sort-desc::after {
+    content: "\25be";
+}
+
+.table-sortable .th-sort-asc::after,
+.table-sortable .th-sort-desc::after {
+    margin-left: 5px;
+}
+
+.table-sortable .th-sort-asc,
+.table-sortable .th-sort-desc {
+    background: rgba(0, 0, 0, 0.1);
 }
