@@ -1,2 +1,2 @@
 # Digital Library
-A web-based digital library that stores and tracks books and reading activity.
+A web-based digital library that tracks books and reading activity.
