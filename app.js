@@ -35,7 +35,7 @@ app.get('/books', async (req, res) => {
     let conn;
     try {
         conn = await fetchConn();
-        console.log('Active connections: ', pool.activeConnections());
+        // console.log('Active connections: ', pool.activeConnections());
         const rows = await conn.query(request);
 
         res.status(200).send(rows);
