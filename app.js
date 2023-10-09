@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const mariadb = require('mariadb');
+const app = express();
+const bodyParser = require('body-parser');
 
 const pool = mariadb.createPool({
     host: process.env.DB_HOST,
@@ -9,31 +11,40 @@ const pool = mariadb.createPool({
     database: process.env.DB_NAME,
     connectionLimit: 2
 });
-async function asyncFunction() {
-    let conn;
-    try {
-        conn = await pool.getConnection();
-        // Print connection thread
-        console.log(`Connected! (id=${conn.threadId})`);
 
-    } catch (err) {
-        throw err;
-    } finally {
-        if (conn) return conn.end();
-    }
+console.log('Active connections: ', pool.activeConnections());
+
+async function fetchConn() {
+    let conn = await pool.getConnection();
+    return conn;
 }
-
-const connection = asyncFunction();
-
-const app = express();
 
 const hostname = process.env.LOCALHOST;
 const port = process.env.DEV_PORT;
 
 app.use(express.static(__dirname));
+app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/client/index.html");
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('/books', async (req, res) => {
+    const request = "SELECT * FROM books";
+
+    let conn;
+    try {
+        conn = await fetchConn();
+        console.log('Active connections: ', pool.activeConnections());
+        const rows = await conn.query(request);
+
+        res.status(200).send(rows);
+
+    } catch (err) {
+        throw err;
+    } finally {
+        if (conn) conn.end();
+    }
 });
 
 app.listen(port, hostname, () => {

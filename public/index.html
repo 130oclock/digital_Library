@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="public/style.css" />
+        <title>Digital Library</title>
+        <script src="node_modules/jquery/dist/jquery.js"></script>
+    </head>
+    <body>
+        <!--Top-->
+        <div>
+            <h1 class="title">Digital Library</h1>
+            <span class="description">Some text</span>
+        </div>
+        <!--Middle-->
+        <div class="panel-container">
+            <!--A table of books-->
+            <div class="panel left_side">
+                <table id="book-list" class="content-table table-sortable">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genre</th>
+                            <th>Date</th>
+                            <th>DDC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <!--A graph of reading-->
+            <div class="panel right_side">
+
+            </div>
+        </div>
+    </body>
+    <script src="public/index.js"></script>
+</html>

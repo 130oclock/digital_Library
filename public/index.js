@@ -36,3 +36,11 @@ document.querySelectorAll(".table-sortable th").forEach(headerCell => {
         sortTableByColumn(tableElement, headerIndex, !currentIsAscending);
     });
 });
+
+$.get('/books', (rows, fields) => {
+    console.log(rows);
+    for (i = 0; i < rows.length; i++) {
+        let row = rows[i];
+        $('#book-list tbody').append(`<tr><td>${ row.title }</td><td>${ row.author }</td><td>${ row.genre }</td><td>${ row.date.substring(0,10) }</td><td>000.000</td></tr>`);
+    }
+});
