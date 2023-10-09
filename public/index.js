@@ -47,25 +47,21 @@ $.get('/books', (rows, fields) => {
         $('#book-list tbody').append(`<tr value="${ row.id }"><td>${ row.title }</td><td>${ row.author }</td><td>${ row.genre }</td><td>${ row.date.substring(0,10) }</td><td>000.000</td></tr>`);
     }
 
-    /*document.querySelectorAll(".search-input").forEach((inputField) => {
-        const tableRows = document.querySelector("#book-list").querySelectorAll("tbody tr");
-        const searchableCells = Array.from(tableRows)
-            .map(row => row.querySelectorAll("td")[0]);
-    
-        inputField.addEventListener("input", () => {
-            const searchQuery = inputField.value.toLowerCase();
-    
-            for (const tableCell of searchableCells) {
-                const row = tableCell.parentElement;
-                const value = tableCell.textContent
-                    .toLowerCase()
-                    .replace(",", "");
-    
-                row.style.visibility = null;
-                if (value.search(searchQuery) === -1) {
-                    row.style.visibility = "collapse";
-                }
+    $(".search-input").on("input", function() {
+        const rows = $(this).parent().find("tbody tr");
+        const searchIndex = 0;
+        const searchableCells = Array.from(rows)
+            .map(row => $(row).children("td")[searchIndex]);
+
+        const searchQuery = $(this).val().toLowerCase();
+        for (const cell of searchableCells) {
+            const row = $(cell).parent();
+            const value = $(cell).text().toLowerCase().replace(",", "");
+
+            $(row).css("visibility", "visible");
+            if (value.search(searchQuery) === -1) {
+                $(row).css("visibility", "collapse");
             }
-        });
-    });*/
+        }
+    });
 });
