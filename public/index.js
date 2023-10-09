@@ -29,6 +29,17 @@ function getCellValue(row, index) {
     return $(row).children("td").eq(index).text().trim();
 }
 
+/**
+ * Returns a string that contains the text from all cells in the row.
+ * @param {Array} row The row to sum.
+ * @returns A string cintaining the text value of all cells.
+ */
+function sumCellValues(row) {
+    const cells = Array.from($(row).children("td"))
+        .map(cell => $(cell).text().toLowerCase().replace(",", ""));
+    return cells.join();
+}
+
 $(".table-sortable thead").on("click", "th", function() {
     const table = $(this).parents("table").eq(0);
     const columnIndex = $(this).index();
@@ -37,29 +48,34 @@ $(".table-sortable thead").on("click", "th", function() {
     sortTableByColumn(table, columnIndex, !ascending);
     // change the column class to match its sorting
     $(this).parent().find("th").removeClass("th-sort-asc th-sort-desc");
-    $(this).toggleClass("th-sort-asc", !ascending).toggleClass("th-sort-desc", ascending);
+    $(this).toggleClass("th-sort-asc", !ascending)
+           .toggleClass("th-sort-desc", ascending);
 });
 
 // add data from database to table
 $.get('/books', (rows, fields) => {
     for (i = 0; i < rows.length; i++) {
         let row = rows[i];
-        $('#book-list tbody').append(`<tr value="${ row.id }"><td>${ row.title }</td><td>${ row.author }</td><td>${ row.genre }</td><td>${ row.date.substring(0,10) }</td><td>000.000</td></tr>`);
+        $('#book-list tbody').append(`<tr value="${ row.id }">
+                                      <td>${ row.title }</td>
+                                      <td>${ row.author }</td>
+                                      <td>${ row.genre }</td>
+                                      <td>${ row.date.substring(0,10) }</td>
+                                      <td>000.000</td></tr>`);
     }
 
     $(".search-input").on("input", function() {
-        const rows = $(this).parent().find("tbody tr");
-        const searchIndex = 0;
-        const searchableCells = Array.from(rows)
-            .map(row => $(row).children("td")[searchIndex]);
+        const tableRows = $(this).parent().find("tbody tr");
+        const searchIndex = parseInt($(this).parent().find("select").val());
+        const searchableRows = Array.from(tableRows);
 
         const searchQuery = $(this).val().toLowerCase();
-        for (const cell of searchableCells) {
-            const row = $(cell).parent();
-            const value = $(cell).text().toLowerCase().replace(",", "");
-
+        for (const row of searchableRows) {
+            // show all cells by default
             $(row).css("visibility", "visible");
-            if (value.search(searchQuery) === -1) {
+            if (sumCellValues(row).search(searchQuery) === -1) {
+                // if the row does not contain the search query
+                // collapse the row
                 $(row).css("visibility", "collapse");
             }
         }
