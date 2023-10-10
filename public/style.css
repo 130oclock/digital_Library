@@ -1,6 +1,7 @@
 :root {
     --accent-color: #5bbbe7;
     --shadow-color: #777;
+    --accent-shadow-color: #4996b9;
 }
 
 body {
@@ -64,11 +65,38 @@ body {
 /* Search Bar */
 .search-bar {
     width: 60%;
-    margin-top: 20px;
-    padding: 12px 15px;
+    margin-top: 25px;
+    padding: 8px 12px;
     border-radius: 4px;
-    border: 1px solid var(--shadow-color);
+    border: none;
+    box-shadow: 0px 0px 5px 0px var(--shadow-color);
+    float: left;
 }
+
+/* Button */
+button {
+    width: 20%;
+    margin-top: 25px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: none;
+    background-color: var(--accent-color);
+    box-shadow: 0px 0px 5px 0px var(--shadow-color);
+    float: right;
+    color: white;
+    font-weight: bold;
+    transition-duration: 0.2s;
+}
+
+button:hover {
+    background-color: var(--accent-shadow-color);
+}
+
+button:active {
+    transition-duration: 0s;
+    filter: brightness(80%);
+}
+
 
 /* Content Table */
 .content-table {
@@ -80,6 +108,7 @@ body {
     border-radius: 4px 4px 0 0;
     overflow: hidden;
     width: 100%;
+    float: left;
 }
 
 .content-table thead tr {
@@ -103,6 +132,7 @@ body {
 
 .content-table tbody tr {
     border-bottom: 1px solid #dddddd;
+    transition-duration: 0.1s;
 }
 
 .content-table tbody tr:nth-of-type(even) {
@@ -119,6 +149,7 @@ body {
 
 .table-sortable th {
     cursor: pointer;
+    transition-duration: 0.2s;
 }
 
 .table-sortable .th-sort-asc::after {
@@ -136,5 +167,51 @@ body {
 
 .table-sortable .th-sort-asc,
 .table-sortable .th-sort-desc {
-    background: rgba(0, 0, 0, 0.1);
+    background-color: var(--accent-shadow-color);
+}
+
+/* Add Book Form */
+.form-popup {
+    display: none;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9;
+}
+
+.form-container {
+    width: 600px;
+    height: 450px;
+    background-color: white;
+    border-radius: 4px;
+    padding: 12px 15px;
+    box-shadow: 0px 0px 5px 0px var(--shadow-color);
+}
+
+.form-container label {
+    float: left;
+}
+
+.form-container .close {
+    position: fixed;
+    top: 20px;
+    right: 15px;
+    z-index: 10;
+}
+
+.form-container input[type=text] {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px 12px;
+    margin: 5px 0 15px 0;
+    border-radius: 4px;
+    border: none;
+    box-shadow: inset 0px 0px 5px 0px var(--shadow-color);
+    float: left;
+}
+
+.form-container input[type=text]:focus {
+    background-color: #dddddd;
+    outline: none;
 }

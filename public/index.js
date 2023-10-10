@@ -54,6 +54,7 @@ $(".table-sortable thead").on("click", "th", function() {
 
 // add data from database to table
 $.get('/books', (rows, fields) => {
+    $("#book-count").text(rows.length);
     for (i = 0; i < rows.length; i++) {
         let row = rows[i];
         $('#book-list tbody').append(`<tr value="${ row.id }">
@@ -80,4 +81,16 @@ $.get('/books', (rows, fields) => {
             }
         }
     });
+
+    // Sort by title ascending
+    sortTableByColumn($("#book-list"), 0);
+    $("#book-list thead").children("th").eq(0).toggleClass("th-sort-asc", true);
+});
+
+$("#add-book-btn").on("click", function() {
+    $("#add-book-form").show();
+});
+
+$(".close").on("click", function() {
+    $(this).closest(".form-popup").hide();
 });
