@@ -58,16 +58,16 @@ $.get('/books', (rows, fields) => {
     for (i = 0; i < rows.length; i++) {
         let row = rows[i];
         $('#book-list tbody').append(`<tr value="${ row.id }">
-                                      <td>${ row.title }</td>
-                                      <td>${ row.author }</td>
-                                      <td>${ row.genre }</td>
-                                      <td>${ row.date.substring(0,10) }</td>
-                                      <td>000.000</td></tr>`);
+                                      <td><div contenteditable spellcheck="false">${ row.title }</div></td>
+                                      <td><div contenteditable spellcheck="false">${ row.author }</div></td>
+                                      <td><div contenteditable spellcheck="false">${ row.genre }</div></td>
+                                      <td><div contenteditable spellcheck="false">${ row.date.substring(0,10) }</div></td>
+                                      </tr>`);
     }
 
     $(".search-input").on("input", function() {
         const tableRows = $(this).parent().find("tbody tr");
-        const searchIndex = parseInt($(this).parent().find("select").val());
+        //const searchIndex = parseInt($(this).parent().find("select").val());
         const searchableRows = Array.from(tableRows);
 
         const searchQuery = $(this).val().toLowerCase();
@@ -84,7 +84,7 @@ $.get('/books', (rows, fields) => {
 
     // Sort by title ascending
     sortTableByColumn($("#book-list"), 0);
-    $("#book-list thead").children("th").eq(0).toggleClass("th-sort-asc", true);
+    $("#book-list thead th").eq(0).toggleClass("th-sort-asc", true);
 });
 
 $("#add-book-btn").on("click", function() {
