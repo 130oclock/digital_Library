@@ -40,8 +40,58 @@ function sumCellValues(row) {
     return cells.join();
 }
 
+/**
+ * Returns an HTML formatted string containing the book data.
+ * @param {number} id The id number of the row.
+ * @param {string} title The title of the book.
+ * @param {string} author The author(s) of the book.
+ * @param {string} genre The genre(s) of the book.
+ * @param {string} date The publication date of the book.
+ * @returns A string.
+ */
+function createTableRow(id, title, author, genre, date) {
+    const rowString = `<tr value="${ id }">
+    <td><div contenteditable spellcheck="false">${ title    }</div></td>
+    <td><div contenteditable spellcheck="false">${ author   }</div></td>
+    <td><div contenteditable spellcheck="false">${ genre    }</div></td>
+    <td><div contenteditable spellcheck="false">${ date     }</div></td>
+    </tr>`;
+    return rowString;
+}
+
+/**
+ * Maps an integer value to a color value.
+ * @param {number} n The level of the color.
+ * @returns A string containing the color information.
+ */
+function assignColor(intVal) {
+    let minR = 231, minG = 231, minB = 231;
+    let maxR = 91, maxG = 187, maxB = 231;
+    let percent = intVal / 200;
+    if (percent > 1) percent = 1;
+    let r = Math.round(minR * (1 - percent) + maxR * percent);
+    let g = Math.round(minG * (1 - percent) + maxG * percent);
+    let b = Math.round(minB * (1 - percent) + maxB * percent);
+
+    return `rgb(${ r },${ g },${ b })`;
+}
+
 // run once the document is ready
 $(function() {
+    const COLUMN = 7;
+    for (i = 0; i < 26; i++) {
+        let rowString = "";
+        for(j = 0; j < COLUMN; j++) {
+            let level = 0; //Math.random() * 200 | 0;
+            rowString += `<td><div data-index="${ j + (COLUMN * i) }" data-level="${ level }"><span class="tooltiptext">${ level } pages read</span></div></td>`
+        }
+        $("#reading-map").append(`<tr>${ rowString }</tr>`);
+    }
+    $(".reading-table div").each(function() {
+        let cell = $(this);
+        cell.css("background-color", assignColor(cell.data("level")));
+    });
+
     $(".table-sortable thead").on("click", "th", function() {
         const table = $(this).parents("table").eq(0);
         const columnIndex = $(this).index();
@@ -56,16 +106,12 @@ $(function() {
     
     // on page load, get books from the database
     // add each book to the table
-    $.get('/books', (rows, fields) => {
+    $.get("/books", (rows, fields) => {
         $("#book-count").text(rows.length);
         for (i = 0; i < rows.length; i++) {
             let row = rows[i];
-            $('#book-list tbody').append(`<tr value="${ row.id }">
-                                          <td><div contenteditable spellcheck="false">${ row.title }</div></td>
-                                          <td><div contenteditable spellcheck="false">${ row.author }</div></td>
-                                          <td><div contenteditable spellcheck="false">${ row.genre }</div></td>
-                                          <td><div contenteditable spellcheck="false">${ row.date.substring(0,10) }</div></td>
-                                          </tr>`);
+            $("#book-list tbody").append(createTableRow(row.id, row.title, 
+                row.author, row.genre, row.date.substring(0,10)));
         }
     
         $(".search-input").on("input", function() {
@@ -114,14 +160,13 @@ $(function() {
             success: function() {
                 let bookCount = parseInt($("#book-count").text());
     
-                $('#book-list tbody').append(`<tr value="${ bookCount }">
-                                            <td><div contenteditable spellcheck="false">${ $("#form-book-title").val() }</div></td>
-                                            <td><div contenteditable spellcheck="false">${ $("#form-book-author").val() }</div></td>
-                                            <td><div contenteditable spellcheck="false">${ $("#form-book-genre").val() }</div></td>
-                                            <td><div contenteditable spellcheck="false">${ $("#form-book-date").val() }</div></td>
-                                            </tr>`);
+                $("#book-list tbody").append(createTableRow(bookCount, 
+                    $("#form-book-title").val(), $("#form-book-author").val(),
+                    $("#form-book-genre").val(), $("#form-book-date").val()));
                 
                 $("#book-count").text(bookCount + 1);
+
+                $("#add-book-form")[0].reset();
             }
         });
     });

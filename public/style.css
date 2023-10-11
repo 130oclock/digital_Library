@@ -19,7 +19,7 @@ body {
 }
 
 .panel {
-    height: 600px;
+    height: 700px;
     border:none;
     border-radius: 4px;
     box-shadow: 0px 0px 5px 0px var(--shadow-color);
@@ -27,21 +27,26 @@ body {
 
 .left_side {
     min-width: 600px;
-    width: 60%;
-    max-width: 900px;
+    width: 70%;
+    max-width: 1200px;
     margin: 10px;
 }
 
 .left_wrapper {
     min-width: 550px;
     width: 91.6%;
-    max-width: 850px;
+    max-width: 1150px;
     margin: 0 auto;
 }
 
 .right_side {
-    width: 300px;
+    width: 162px;
     margin: 10px;
+}
+
+.right_wrapper {
+    width: 122px;
+    margin: 20px 20px 10px 20px;
 }
 
 /* Text */
@@ -64,7 +69,7 @@ body {
 /* Inputs */
 input[type=text] {
     padding: 8px 12px;
-    /*border-radius: 4px;*/
+    border-radius: 4px 4px 0 0;
     border: none;
     border-bottom: 2px solid var(--accent-color);
     box-sizing: border-box;
@@ -155,12 +160,12 @@ button:active {
     overflow: auto;
     min-width: 400px;
     width: 100%;
-    height: 475px;
+    height: 585px;
     float: left;
 }
 
 .table-scroll-short {
-    height: 430px;
+    height: 540px;
 }
 
 .content-table thead tr {
@@ -221,4 +226,70 @@ button:active {
 .table-sortable .th-sort-asc,
 .table-sortable .th-sort-desc {
     background-color: var(--accent-shadow-color);
+}
+
+/* Reading Map */
+.reading-table {
+    border-collapse: collapse;
+    font-size: 0.7em;
+    text-align: center;
+}
+
+.reading-table thead th {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 4px 0;
+}
+.reading-table td {
+    padding: 4px 2px 0 2px;
+}
+
+.reading-table td:first-of-type {
+    padding: 4px 2px 0 0;
+}
+
+.reading-table td:last-of-type {
+    padding: 4px 0 0 2px;
+}
+
+.reading-table td div {
+    width: 14px;
+    height: 14px;
+    background-color: var(--shadow-color);
+    border: none;
+    position: relative;
+}
+
+.reading-table td div .tooltiptext {
+    visibility: hidden;
+    background-color: #666;
+    color: white;
+    text-align: center;
+    padding: 6px 0;
+    border-radius: 6px;
+    font-size: 1em;
+
+    width: 100px;
+
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -50px;
+    pointer-events: none;
+}
+
+.reading-table td div .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 100%; /* At the bottom of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #666 transparent transparent transparent;
+}
+
+.reading-table td:hover .tooltiptext {
+    visibility: visible;
 }
