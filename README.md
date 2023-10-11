@@ -10,4 +10,3 @@ Allows the table to be sorted by the contents of each row. Includes a drop down 
 - Add multiselect for deletion using checkboxes 
 - Add calendar view of reading activity
 - Add status for read books
-- Don't reload page when adding a book, but add it on client side
