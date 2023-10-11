@@ -19,8 +19,20 @@
             <div class="panel left_side">
                 <div class="left_wrapper">
                     <input type="text" class="search-bar search-input" placeholder="Search by Title, Author, Genre..."></input>
-                    <!--<button id="add-book-btn">Add Book</button>-->
-                    <div class="table-scroll">
+                    <button id="add-book-btn">Add Book</button>
+                    <!--Add Book Form-->
+                    <div class="form-popup popup-hidden" id="add-book-form">
+                        <form action="/add-book" method="post" class="form-container">
+                            <input name="title" id="form-book-title" type="text" placeholder="Title" required>
+                            <input name="author" id="form-book-author" type="text" placeholder="Author" required>
+                            <input name="genre" id="form-book-genre" type="text" placeholder="Genre" required>
+                            <input name="date" id="form-book-date" type="text" placeholder="YYYY-MM-DD" required>
+            
+                            <button type="submit">Add</button>
+                        </form>
+                    </div>
+                    <!--Table of Books-->
+                    <div class="table-scroll" id="book-list-scroll">
                         <table id="book-list" class="content-table table-sortable">
                             <thead>
                                 <tr>
@@ -40,26 +52,6 @@
             <div class="panel right_side">
 
             </div>
-        </div>
-
-        <div class="form-popup" id="add-book-form">
-            <form action="/add-book" method="post" class="form-container">
-                <h1>Add a Book</h1><button type="button" class="close">Close</button>
-
-                <label for="form-book-title">Title</label>
-                <input name="title" id="form-book-title" type="text" placeholder="Title" required>
-
-                <label for="form-book-author">Author</label>
-                <input name="author" id="form-book-author" type="text" placeholder="Author" required>
-
-                <label for="form-book-genre">Genre</label>
-                <input name="genre" id="form-book-genre" type="text" placeholder="Genre" required>
-
-                <label for="form-book-date">Date of Publication</label>
-                <input name="date" id="form-book-date" type="text" placeholder="YYYY-MM-DD" required>
-
-                <button type="submit">Add</button>
-            </form>
         </div>
     </body>
     <script src="public/index.js"></script>

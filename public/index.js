@@ -88,9 +88,8 @@ $.get('/books', (rows, fields) => {
 });
 
 $("#add-book-btn").on("click", function() {
-    $("#add-book-form").show();
-});
-
-$(".close").on("click", function() {
-    $(this).closest(".form-popup").hide();
+    const form = $("#add-book-form");
+    const shown = form.hasClass("popup-hidden");
+    form.toggleClass("popup-hidden", !shown);
+    $("#book-list-scroll").toggleClass("table-scroll-short", shown);
 });
