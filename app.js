@@ -61,8 +61,9 @@ app.post('/add-book', async (req, res) => {
         // console.log('Active connections: ', pool.activeConnections());
         await conn.query(insert, [data.title, data.author, data.genre, data.date]);
 
-        res.status(200).redirect('/');
+        res.sendStatus(200);
     } catch (err) {
+        res.sendStatus(408);
         throw err;
     } finally {
         if (conn) conn.end();

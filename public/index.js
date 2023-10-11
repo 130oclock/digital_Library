@@ -40,56 +40,89 @@ function sumCellValues(row) {
     return cells.join();
 }
 
-$(".table-sortable thead").on("click", "th", function() {
-    const table = $(this).parents("table").eq(0);
-    const columnIndex = $(this).index();
-    const ascending = $(this).hasClass("th-sort-asc");
-    // sort the table by column
-    sortTableByColumn(table, columnIndex, !ascending);
-    // change the column class to match its sorting
-    $(this).parent().find("th").removeClass("th-sort-asc th-sort-desc");
-    $(this).toggleClass("th-sort-asc", !ascending)
-           .toggleClass("th-sort-desc", ascending);
-});
-
-// add data from database to table
-$.get('/books', (rows, fields) => {
-    $("#book-count").text(rows.length);
-    for (i = 0; i < rows.length; i++) {
-        let row = rows[i];
-        $('#book-list tbody').append(`<tr value="${ row.id }">
-                                      <td><div contenteditable spellcheck="false">${ row.title }</div></td>
-                                      <td><div contenteditable spellcheck="false">${ row.author }</div></td>
-                                      <td><div contenteditable spellcheck="false">${ row.genre }</div></td>
-                                      <td><div contenteditable spellcheck="false">${ row.date.substring(0,10) }</div></td>
-                                      </tr>`);
-    }
-
-    $(".search-input").on("input", function() {
-        const tableRows = $(this).parent().find("tbody tr");
-        //const searchIndex = parseInt($(this).parent().find("select").val());
-        const searchableRows = Array.from(tableRows);
-
-        const searchQuery = $(this).val().toLowerCase();
-        for (const row of searchableRows) {
-            // show all cells by default
-            $(row).css("visibility", "visible");
-            if (sumCellValues(row).search(searchQuery) === -1) {
-                // if the row does not contain the search query
-                // collapse the row
-                $(row).css("visibility", "collapse");
-            }
-        }
+// run once the document is ready
+$(function() {
+    $(".table-sortable thead").on("click", "th", function() {
+        const table = $(this).parents("table").eq(0);
+        const columnIndex = $(this).index();
+        const ascending = $(this).hasClass("th-sort-asc");
+        // sort the table by column
+        sortTableByColumn(table, columnIndex, !ascending);
+        // change the column class to match its sorting
+        $(this).parent().find("th").removeClass("th-sort-asc th-sort-desc");
+        $(this).toggleClass("th-sort-asc", !ascending)
+               .toggleClass("th-sort-desc", ascending);
     });
-
-    // Sort by title ascending
-    sortTableByColumn($("#book-list"), 0);
-    $("#book-list thead th").eq(0).toggleClass("th-sort-asc", true);
-});
-
-$("#add-book-btn").on("click", function() {
-    const form = $("#add-book-form");
-    const shown = form.hasClass("popup-hidden");
-    form.toggleClass("popup-hidden", !shown);
-    $("#book-list-scroll").toggleClass("table-scroll-short", shown);
+    
+    // on page load, get books from the database
+    // add each book to the table
+    $.get('/books', (rows, fields) => {
+        $("#book-count").text(rows.length);
+        for (i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            $('#book-list tbody').append(`<tr value="${ row.id }">
+                                          <td><div contenteditable spellcheck="false">${ row.title }</div></td>
+                                          <td><div contenteditable spellcheck="false">${ row.author }</div></td>
+                                          <td><div contenteditable spellcheck="false">${ row.genre }</div></td>
+                                          <td><div contenteditable spellcheck="false">${ row.date.substring(0,10) }</div></td>
+                                          </tr>`);
+        }
+    
+        $(".search-input").on("input", function() {
+            $(this).parent().find(".table-scroll").eq(0).scrollTop(0);
+            const tableRows = $(this).parent().find("tbody tr");
+            //const searchIndex = parseInt($(this).parent().find("select").val());
+            const searchableRows = Array.from(tableRows);
+    
+            const searchQuery = $(this).val().toLowerCase();
+            for (const row of searchableRows) {
+                // show all cells by default
+                $(row).css("visibility", "visible");
+                if (sumCellValues(row).search(searchQuery) === -1) {
+                    // if the row does not contain the search query
+                    // collapse the row
+                    $(row).css("visibility", "collapse");
+                }
+            }
+        });
+    
+        // Sort by title ascending once the table has data
+        sortTableByColumn($("#book-list"), 0);
+        $("#book-list thead th").eq(0).toggleClass("th-sort-asc", true);
+    });
+    
+    // add an event listener to handle toggling the menu for adding books
+    $("#add-book-btn").on("click", function() {
+        $("#add-book-form-popup").toggleClass("popup-hidden");
+        $("#book-list-scroll").toggleClass("table-scroll-short");
+    });
+    
+    $("#add-book-form").on("submit", function(e) {
+        e.preventDefault();
+        let dataString = $(this).serializeArray();
+    
+        // form data validation
+        /*let dateCheck = /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/;
+        if (dateCheck.text($("#form-book-date").val())) {
+            
+        }*/
+    
+        $.ajax({
+            type: "POST",
+            url: "/add-book",
+            data: dataString,
+            success: function() {
+                let bookCount = parseInt($("#book-count").text());
+    
+                $('#book-list tbody').append(`<tr value="${ bookCount }">
+                                            <td><div contenteditable spellcheck="false">${ $("#form-book-title").val() }</div></td>
+                                            <td><div contenteditable spellcheck="false">${ $("#form-book-author").val() }</div></td>
+                                            <td><div contenteditable spellcheck="false">${ $("#form-book-genre").val() }</div></td>
+                                            <td><div contenteditable spellcheck="false">${ $("#form-book-date").val() }</div></td>
+                                            </tr>`);
+                
+                $("#book-count").text(bookCount + 1);
+            }
+        });
+    });
 });
