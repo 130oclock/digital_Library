@@ -50,7 +50,7 @@ function sumCellValues(row) {
  * @returns A string.
  */
 function createTableRow(id, title, author, genre, date) {
-    const rowString = `<tr value="${ id }">
+    const rowString = `<tr data-index="${ id }">
     <td><div contenteditable spellcheck="false">${ title    }</div></td>
     <td><div contenteditable spellcheck="false">${ author   }</div></td>
     <td><div contenteditable spellcheck="false">${ genre    }</div></td>
@@ -76,21 +76,32 @@ function assignColor(intVal) {
     return `rgb(${ r },${ g },${ b })`;
 }
 
+function randomLevels() {
+    $("#reading-map div").each(function() {
+        $(this).data("level", Math.random() * 200 | 0);
+    });
+}
+
+function updateHeatMapLevels() {
+    $(".reading-table div").each(function() {
+        let cell = $(this);
+        cell.css("background-color", assignColor(cell.data("level")));
+        cell.children("span").eq(0).text(`${cell.data("level")} pages read`);
+    });
+}
+
 // run once the document is ready
 $(function() {
     const COLUMN = 7;
     for (i = 0; i < 26; i++) {
         let rowString = "";
         for(j = 0; j < COLUMN; j++) {
-            let level = 0; //Math.random() * 200 | 0;
-            rowString += `<td><div data-index="${ j + (COLUMN * i) }" data-level="${ level }"><span class="tooltiptext">${ level } pages read</span></div></td>`
+            let level = 0;
+            rowString += `<td><div data-index="${ j + (COLUMN * i) }" data-level="${ level }"><span class="tooltiptext"></span></div></td>`
         }
         $("#reading-map").append(`<tr>${ rowString }</tr>`);
     }
-    $(".reading-table div").each(function() {
-        let cell = $(this);
-        cell.css("background-color", assignColor(cell.data("level")));
-    });
+    updateHeatMapLevels();
 
     $(".table-sortable thead").on("click", "th", function() {
         const table = $(this).parents("table").eq(0);
@@ -135,6 +146,24 @@ $(function() {
         // Sort by title ascending once the table has data
         sortTableByColumn($("#book-list"), 0);
         $("#book-list thead th").eq(0).toggleClass("th-sort-asc", true);
+
+        $("#book-list tbody").on("focus", "[contenteditable]", function() {
+            $(this).attr("before", $(this).text());
+        });
+
+        $("#book-list tbody").on("keydown", "[contenteditable]", function(e) {
+            // check if the enter key is pressed and check if the text has been changed
+            if (e.which === 13) {
+                e.preventDefault();
+                let content = $(this);
+                let i = content.closest("tr").attr("index");
+                let before = content.attr("before");
+                let text = content.text();
+                if (text !== before) {
+                    alert(`You pressed enter in row ${ i } and changed its content from "${ before }" to "${ text }"!`);
+                }
+            }
+        });
     });
     
     // add an event listener to handle toggling the menu for adding books

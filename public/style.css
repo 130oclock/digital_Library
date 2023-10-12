@@ -25,26 +25,26 @@ body {
     box-shadow: 0px 0px 5px 0px var(--shadow-color);
 }
 
-.left_side {
+.left-side {
     min-width: 600px;
     width: 70%;
     max-width: 1200px;
     margin: 10px;
 }
 
-.left_wrapper {
+.left-wrapper {
     min-width: 550px;
     width: 91.6%;
     max-width: 1150px;
     margin: 0 auto;
 }
 
-.right_side {
+.right-side {
     width: 162px;
     margin: 10px;
 }
 
-.right_wrapper {
+.right-wrapper {
     width: 122px;
     margin: 20px 20px 10px 20px;
 }
@@ -85,9 +85,15 @@ input[type=text]:focus {
 }
 
 .search-bar {
-    width: 86%;
+    width: 100%;
     margin-top: 25px;
-    float: left;
+}
+
+span.input-fillspace {
+    display: block;
+    overflow: hidden;
+    padding-right: 12px;
+    padding-left: 2px;
 }
 
 /* Button */
@@ -117,6 +123,8 @@ button:active {
 #add-book-btn {
     width: 12%;
     margin-top: 25px;
+    min-width: 90px;
+    float: right;
 }
 
 /* Add Book Form */
@@ -130,14 +138,24 @@ button:active {
     float: left;
 }
 
+.form-input-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    margin: 10px 0 0 0;
+}
+
 .form-container input[type=text] {
-    width: 20%;
-    margin: 10px 10px 0 0;
+    width: 25%;
 }
 
 .form-container button[type=submit] {
+    display: block;
     width: 12%;
     margin: 10px 0 0 0;
+    min-width: 90px;
+    float: right;
 }
 
 .popup-hidden {

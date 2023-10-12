@@ -16,19 +16,22 @@
         <!--Middle-->
         <div class="panel-container">
             <!--A table of books-->
-            <div class="panel left_side">
-                <div class="left_wrapper">
-                    <input type="text" class="search-bar search-input" placeholder="Search by Title, Author, Genre..."></input>
+            <div class="panel left-side">
+                <div class="left-wrapper">
                     <button id="add-book-btn">Add Book</button>
+                    <span class="input-fillspace"><input type="text" class="search-bar search-input" placeholder="Search by Title, Author, Genre..."></input></span>
                     <!--Add Book Form-->
                     <div class="form-popup popup-hidden" id="add-book-form-popup">
                         <form action="/add-book" method="post" class="form-container" id="add-book-form">
-                            <input name="title" id="form-book-title" type="text" placeholder="Title" required>
-                            <input name="author" id="form-book-author" type="text" placeholder="Author" required>
-                            <input name="genre" id="form-book-genre" type="text" placeholder="Genre" required>
-                            <input name="date" id="form-book-date" type="text" placeholder="YYYY-MM-DD" required>
-            
-                            <button type="submit">Add</button>
+                            <button type="submit">Submit</button>
+                            <span class="input-fillspace">
+                                <div class="form-input-wrapper">
+                                    <input name="title" id="form-book-title" type="text" placeholder="Title" required>
+                                    <input name="author" id="form-book-author" type="text" placeholder="Author" required>
+                                    <input name="genre" id="form-book-genre" type="text" placeholder="Genre" required>
+                                    <input name="date" id="form-book-date" type="text" placeholder="YYYY-MM-DD" required>
+                                </div>
+                            </span>
                         </form>
                     </div>
                     <!--Table of Books-->
@@ -49,8 +52,8 @@
                 </div>
             </div>
             <!--A graph of reading-->
-            <div class="panel right_side">
-                <div class="right_wrapper">
+            <div class="panel right-side">
+                <div class="right-wrapper">
                     <div style="text-align: center; margin-bottom: 10px;">Pages Read</div>
                     <table id="reading-map" class="reading-table">
                         <thead>
