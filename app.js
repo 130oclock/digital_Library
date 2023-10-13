@@ -8,13 +8,12 @@ const pool = mariadb.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    connectionLimit: 2
+    connectionLimit: 5
 });
-
-console.log('Active connections: ', pool.activeConnections());
 
 async function fetchConn() {
     let conn = await pool.getConnection();
+    // console.log('Active connections: ', pool.activeConnections());
     return conn;
 }
 
@@ -30,38 +29,55 @@ app.get('/', (req, res) => {
 
 app.get('/books', async (req, res) => {
     const request = "SELECT * FROM books";
+    console.log("GET /books");
 
     let conn;
     try {
         conn = await fetchConn();
-        // console.log('Active connections: ', pool.activeConnections());
         const rows = await conn.query(request);
 
         res.status(200).send(rows);
 
     } catch (err) {
+        res.sendStatus(408);
         throw err;
     } finally {
         if (conn) conn.end();
     }
 });
 
-app.get('/add-book', (req, res) => {
-
-});
-
 app.post('/add-book', async (req, res) => {
     const insert = "INSERT INTO books (title, author, genre, date) VALUES (?, ?, ?, ?)";
     const data = req.body;
-    console.log("POST request for:", data.title, data.author, data.genre, data.date);
+    console.log("POST /add-book:", data.title, data.author, data.genre, data.date);
 
     let conn;
     try {
         conn = await fetchConn();
-        // console.log('Active connections: ', pool.activeConnections());
         await conn.query(insert, [data.title, data.author, data.genre, data.date]);
+        let newRowID = await conn.query("SELECT LAST_INSERT_ID()");
+
+        res.status(200).send(`{"id":"${newRowID.toString()}"}`);
+    } catch (err) {
+        res.sendStatus(408);
+        throw err;
+    } finally {
+        if (conn) conn.end();
+    }
+});
+
+app.post('/edit-book', async (req, res) => {
+    const data = req.body;
+    const query = `UPDATE books SET ${data.column} = ? WHERE id = ?`;
+    console.log("Post /edit-book:", data.column, data.text, data.id);
+    
+    let conn;
+    try {
+        conn = await fetchConn();
+        conn.query(query, [data.text, data.id]);
 
         res.sendStatus(200);
+
     } catch (err) {
         res.sendStatus(408);
         throw err;

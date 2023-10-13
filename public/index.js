@@ -51,12 +51,28 @@ function sumCellValues(row) {
  */
 function createTableRow(id, title, author, genre, date) {
     const rowString = `<tr data-index="${ id }">
-    <td><div contenteditable spellcheck="false">${ title    }</div></td>
-    <td><div contenteditable spellcheck="false">${ author   }</div></td>
-    <td><div contenteditable spellcheck="false">${ genre    }</div></td>
-    <td><div contenteditable spellcheck="false">${ date     }</div></td>
+    <td><div column="title" contenteditable spellcheck="false">${   title    }</div></td>
+    <td><div column="author" contenteditable spellcheck="false">${  author   }</div></td>
+    <td><div column="genre" contenteditable spellcheck="false">${   genre    }</div></td>
+    <td><div column="date" contenteditable spellcheck="false">${    date     }</div></td>
     </tr>`;
     return rowString;
+}
+
+/**
+ * Verifies that the text content matches an accepted format.
+ * @param {Array} columnTypes An array of integers representing the column type 
+ * corresponding to the elements in columnContent.
+ * @param {Array} columnContent An array of strings representing the text in each 
+ * column that should be checked.
+ * @returns A true if all checks are passed. Returns false if one fails.
+ */
+function verifyTextFormat(columnTypes, columnContent) {
+    /*let dateCheck = /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/;
+    if (dateCheck.text($("#form-book-date").val())) {
+        
+    }*/
+    return true;
 }
 
 /**
@@ -90,6 +106,8 @@ function updateHeatMapLevels() {
     });
 }
 
+var bookCount = 0;
+
 // run once the document is ready
 $(function() {
     const COLUMN = 7;
@@ -97,7 +115,8 @@ $(function() {
         let rowString = "";
         for(j = 0; j < COLUMN; j++) {
             let level = 0;
-            rowString += `<td><div data-index="${ j + (COLUMN * i) }" data-level="${ level }"><span class="tooltiptext"></span></div></td>`
+            rowString += `<td><div data-index="${ j + (COLUMN * i) }" 
+                data-level="${ level }"><span class="tooltiptext"></span></div></td>`;
         }
         $("#reading-map").append(`<tr>${ rowString }</tr>`);
     }
@@ -118,7 +137,8 @@ $(function() {
     // on page load, get books from the database
     // add each book to the table
     $.get("/books", (rows, fields) => {
-        $("#book-count").text(rows.length);
+        bookCount = rows.length + 1;
+        $("#book-count").text(bookCount);
         for (i = 0; i < rows.length; i++) {
             let row = rows[i];
             $("#book-list tbody").append(createTableRow(row.id, row.title, 
@@ -126,8 +146,8 @@ $(function() {
         }
     
         $(".search-input").on("input", function() {
-            $(this).parent().find(".table-scroll").eq(0).scrollTop(0);
-            const tableRows = $(this).parent().find("tbody tr");
+            $(this).parent().parent().find(".table-scroll").eq(0).scrollTop(0);
+            const tableRows = $(this).parent().parent().find("tbody tr");
             //const searchIndex = parseInt($(this).parent().find("select").val());
             const searchableRows = Array.from(tableRows);
     
@@ -156,11 +176,27 @@ $(function() {
             if (e.which === 13) {
                 e.preventDefault();
                 let content = $(this);
-                let i = content.closest("tr").attr("index");
+                let i = content.closest("tr").data("index");
+                let column = content.attr("column")
                 let before = content.attr("before");
                 let text = content.text();
                 if (text !== before) {
-                    alert(`You pressed enter in row ${ i } and changed its content from "${ before }" to "${ text }"!`);
+                    let dataString = `column=${column}&id=${i}&text=${text}`;
+
+                    if (!verifyTextFormat([column], [text])) {
+                        // the text does not match the correct format, 
+                        // so do not send the POST request.
+                        return false;
+                    }
+                    // Send post request to server to change the value in the database
+                    $.ajax({
+                        type: "POST",
+                        url: "/edit-book",
+                        data: dataString,
+                        success: function() {
+                            content.attr("before", text).blur();
+                        }
+                    });
                 }
             }
         });
@@ -175,28 +211,30 @@ $(function() {
     $("#add-book-form").on("submit", function(e) {
         e.preventDefault();
         let dataString = $(this).serializeArray();
+
+        let title = $("#form-book-title").val(), author = $("#form-book-author").val(),
+            genre = $("#form-book-genre").val(), date = $("#form-book-date").val();
     
         // form data validation
-        /*let dateCheck = /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/;
-        if (dateCheck.text($("#form-book-date").val())) {
-            
-        }*/
+        if (!verifyTextFormat(["title", "author", "genre", "date"], 
+                              [title, author, genre, date])) {
+            return false;
+        }
     
         $.ajax({
             type: "POST",
             url: "/add-book",
             data: dataString,
-            success: function() {
-                let bookCount = parseInt($("#book-count").text());
-    
-                $("#book-list tbody").append(createTableRow(bookCount, 
-                    $("#form-book-title").val(), $("#form-book-author").val(),
-                    $("#form-book-genre").val(), $("#form-book-date").val()));
+            success: function(res) {
+                $("#book-list tbody").append(
+                    createTableRow(res.id, title, author, genre, date)
+                );
                 
-                $("#book-count").text(bookCount + 1);
+                $("#book-count").text(++bookCount);
 
                 $("#add-book-form")[0].reset();
-            }
+            },
+            dataType: "json"
         });
     });
 });
