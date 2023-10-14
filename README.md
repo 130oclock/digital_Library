@@ -16,15 +16,15 @@ git clone https://github.com/130oclock/digital_Library
 cd digital_Library
 npm install
 ```
-- Install MariaDB, connect, add a new database, and create a new user
-~~~~sql
-mariadb -u root -p -h localhost
-> CREATE DATABASE <database_name>;
-> CREATE USER <username> IDENTIFIED BY <password>;
-> GRANT ALL PRIVILEGES ON <database_name> TO <username>;
-> FLUSH PRIVILEGES;
-> EXIT;
-~~~~
+- Install and connect to MariaDB
+- Add a new database and create a new user
+```
+CREATE DATABASE <database_name>;
+CREATE USER <username> IDENTIFIED BY <password>;
+GRANT ALL PRIVILEGES ON <database_name> TO <username>;
+FLUSH PRIVILEGES;
+EXIT;
+```
 - Create a .env according to this [example](#example-env)
 - Run the project
 ```bash
