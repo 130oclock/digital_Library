@@ -9,7 +9,7 @@ This project is a Node.js digital library that tracks books and reading activity
 ## Install
 - Clone the repository
 ```bash
-$ git clone https://github.com/130oclock/digital_Library
+git clone https://github.com/130oclock/digital_Library
 ```
 - Install dependencies
 ```bash
