@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="public/style.css" />
-        <title>Digital Library</title>
+        <title>Digital Library [0]</title>
         <script src="node_modules/jquery/dist/jquery.js"></script>
     </head>
     <body>
@@ -39,20 +39,22 @@
                         <table id="book-list" class="content-table table-sortable">
                             <thead>
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Author</th>
-                                    <th>Genre</th>
-                                    <th>Date</th>
+                                    <th><input type="checkbox" id="select_all_checkboxes"></th>
+                                    <th class="sortable">Title</th>
+                                    <th class="sortable">Author</th>
+                                    <th class="sortable">Genre</th>
+                                    <th class="sortable">Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
                     </div>
+                    <button id="delete-book-btn">Delete Selected</button>
                 </div>
             </div>
             <!--A graph of reading-->
-            <div class="panel right-side">
+            <!--<div class="panel right-side">
                 <div class="right-wrapper">
                     <div style="text-align: center; margin-bottom: 10px;">Pages Read</div>
                     <table id="reading-map" class="reading-table">
@@ -71,7 +73,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div>-->
         </div>
     </body>
     <script src="public/index.js"></script>

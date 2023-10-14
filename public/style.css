@@ -1,7 +1,7 @@
 :root {
     --accent-color: #5bbbe7;
     --accent-shadow-color: #4996b9;
-    --shadow-color: #e7e7e7;
+    --shadow-color: #dddddd;
 }
 
 body {
@@ -9,6 +9,7 @@ body {
     background-color: #FFF;
     font-size: 1em;
     font-family: Tahoma, Arial, sans-serif;
+    background-color: #F8F8F0;
 }
 
 /* Organization */
@@ -19,10 +20,10 @@ body {
 }
 
 .panel {
-    height: 700px;
     border:none;
     border-radius: 4px;
     box-shadow: 0px 0px 5px 0px var(--shadow-color);
+    background-color: #FFF;
 }
 
 .left-side {
@@ -30,6 +31,7 @@ body {
     width: 70%;
     max-width: 1200px;
     margin: 10px;
+    height: 700px;
 }
 
 .left-wrapper {
@@ -42,6 +44,7 @@ body {
 .right-side {
     width: 162px;
     margin: 10px;
+    height: 700px;
 }
 
 .right-wrapper {
@@ -127,6 +130,10 @@ button:active {
     float: right;
 }
 
+#delete-book-btn {
+    float: left;
+}
+
 /* Add Book Form */
 .form-popup {
     display: block;
@@ -178,12 +185,13 @@ button:active {
     overflow: auto;
     min-width: 400px;
     width: 100%;
-    height: 585px;
+    height: 530px;
     float: left;
+    box-shadow: 0px 0px 5px 0px var(--shadow-color);
 }
 
 .table-scroll-short {
-    height: 540px;
+    height: 485px;
 }
 
 .content-table thead tr {
@@ -202,17 +210,13 @@ button:active {
     text-align: left;
 }
 
-.content-table td {
-    max-width: 100px;
-}
-
 .content-table tbody tr {
     border-bottom: 1px solid #dddddd;
     transition-duration: 0.1s;
 }
 
 .content-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+    background-color: #F8F8F0;
 }
 
 .content-table tbody tr:last-of-type {
@@ -226,6 +230,17 @@ button:active {
 .table-sortable th {
     cursor: pointer;
     transition-duration: 0.2s;
+}
+
+.table-sortable tr th:first-of-type,
+.table-sortable tr td:first-of-type {
+    width: 20px;
+    padding: 0 8px;
+    border-right: 1px solid #dddddd;
+} 
+
+.table-sortable tr th:last-of-type {
+    width: 100px;
 }
 
 .table-sortable .th-sort-asc::after {

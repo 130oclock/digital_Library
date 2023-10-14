@@ -49,8 +49,9 @@ function sumCellValues(row) {
  * @param {string} date The publication date of the book.
  * @returns A string.
  */
-function createTableRow(id, title, author, genre, date) {
+function createTableRow(id, title, author, genre, date, status) {
     const rowString = `<tr data-index="${ id }">
+    <td><input type="checkbox"></td>
     <td><div column="title" contenteditable spellcheck="false">${   title    }</div></td>
     <td><div column="author" contenteditable spellcheck="false">${  author   }</div></td>
     <td><div column="genre" contenteditable spellcheck="false">${   genre    }</div></td>
@@ -61,7 +62,7 @@ function createTableRow(id, title, author, genre, date) {
 
 /**
  * Verifies that the text content matches an accepted format.
- * @param {Array} columnTypes An array of integers representing the column type 
+ * @param {Array} columnTypes An array of strings representing the column type 
  * corresponding to the elements in columnContent.
  * @param {Array} columnContent An array of strings representing the text in each 
  * column that should be checked.
@@ -108,9 +109,9 @@ function updateHeatMapLevels() {
 
 var bookCount = 0;
 
-// run once the document is ready
+// Run once the document has loaded all html elements.
 $(function() {
-    const COLUMN = 7;
+    /*const COLUMN = 7;
     for (i = 0; i < 26; i++) {
         let rowString = "";
         for(j = 0; j < COLUMN; j++) {
@@ -120,94 +121,106 @@ $(function() {
         }
         $("#reading-map").append(`<tr>${ rowString }</tr>`);
     }
-    updateHeatMapLevels();
+    updateHeatMapLevels();*/
 
-    $(".table-sortable thead").on("click", "th", function() {
+    // Add an event listener to sort a column when its header is clicked.
+    $(".table-sortable thead").on("click", ".sortable", function() {
         const table = $(this).parents("table").eq(0);
         const columnIndex = $(this).index();
         const ascending = $(this).hasClass("th-sort-asc");
         // sort the table by column
         sortTableByColumn(table, columnIndex, !ascending);
         // change the column class to match its sorting
-        $(this).parent().find("th").removeClass("th-sort-asc th-sort-desc");
+        $(this).parent().find(".sortable").removeClass("th-sort-asc th-sort-desc");
         $(this).toggleClass("th-sort-asc", !ascending)
                .toggleClass("th-sort-desc", ascending);
     });
+
+    // Add an event listener to set all checkboxes to the same value as the header checkbox.
+    $("#select_all_checkboxes").on("click", function() {
+        $(this).closest("table").find("input:checkbox").not(this)
+            .prop("checked", this.checked);
+    });
     
-    // on page load, get books from the database
-    // add each book to the table
-    $.get("/books", (rows, fields) => {
+    // Send a GET request for books in the database. Once the rows are received,
+    // add each book to the table.
+    $.get("/books", (rows) => {
         bookCount = rows.length + 1;
         $("#book-count").text(bookCount);
+        document.title = document.title.replace(/\[.*?\]/, `[${ bookCount }]`);
         for (i = 0; i < rows.length; i++) {
             let row = rows[i];
             $("#book-list tbody").append(createTableRow(row.id, row.title, 
                 row.author, row.genre, row.date.substring(0,10)));
         }
     
-        $(".search-input").on("input", function() {
-            $(this).parent().parent().find(".table-scroll").eq(0).scrollTop(0);
-            const tableRows = $(this).parent().parent().find("tbody tr");
-            //const searchIndex = parseInt($(this).parent().find("select").val());
-            const searchableRows = Array.from(tableRows);
-    
-            const searchQuery = $(this).val().toLowerCase();
-            for (const row of searchableRows) {
-                // show all cells by default
-                $(row).css("visibility", "visible");
-                if (sumCellValues(row).search(searchQuery) === -1) {
-                    // if the row does not contain the search query
-                    // collapse the row
-                    $(row).css("visibility", "collapse");
-                }
+        // Sort by title ascending once the table has data.
+        sortTableByColumn($("#book-list"), $("#book-list thead .sortable").eq(0).index());
+        $("#book-list thead .sortable").eq(0).toggleClass("th-sort-asc", true);
+    });
+
+    // Add an event listener to hide rows that do not match the searched content.
+    $(".search-input").on("input", function() {
+        $(this).parent().parent().find(".table-scroll").eq(0).scrollTop(0);
+        const tableRows = $(this).parent().parent().find("tbody tr");
+        //const searchIndex = parseInt($(this).parent().find("select").val());
+        const searchableRows = Array.from(tableRows);
+
+        const searchQuery = $(this).val().toLowerCase();
+        for (const row of searchableRows) {
+            // show all cells by default
+            $(row).css("visibility", "visible");
+            if (sumCellValues(row).search(searchQuery) === -1) {
+                // if the row does not contain the search query
+                // collapse the row
+                $(row).css("visibility", "collapse");
             }
-        });
-    
-        // Sort by title ascending once the table has data
-        sortTableByColumn($("#book-list"), 0);
-        $("#book-list thead th").eq(0).toggleClass("th-sort-asc", true);
+        }
+    });
 
-        $("#book-list tbody").on("focus", "[contenteditable]", function() {
-            $(this).attr("before", $(this).text());
-        });
+    // Add an event listener to store the content of the text field when it is focused.
+    $("#book-list tbody").on("focus", "[contenteditable]", function() {
+        $(this).attr("before", $(this).text());
+    });
 
-        $("#book-list tbody").on("keydown", "[contenteditable]", function(e) {
-            // check if the enter key is pressed and check if the text has been changed
-            if (e.which === 13) {
-                e.preventDefault();
-                let content = $(this);
-                let i = content.closest("tr").data("index");
-                let column = content.attr("column")
-                let before = content.attr("before");
-                let text = content.text();
-                if (text !== before) {
-                    let dataString = `column=${column}&id=${i}&text=${text}`;
+    // Send a POST request when a book's details are changed.
+    $("#book-list tbody").on("keydown", "[contenteditable]", function(e) {
+        // Check if the 'enter' key is pressed and check if the text has been changed.
+        if (e.which === 13) {
+            e.preventDefault();
+            let content = $(this);
+            let i = content.closest("tr").data("index");
+            let column = content.attr("column")
+            let before = content.attr("before");
+            let text = content.text();
+            if (text !== before) {
+                let dataString = `column=${column}&id=${i}&text=${text}`;
 
-                    if (!verifyTextFormat([column], [text])) {
-                        // the text does not match the correct format, 
-                        // so do not send the POST request.
-                        return false;
+                if (!verifyTextFormat([column], [text])) {
+                    // the text does not match the correct format, 
+                    // so do not send the POST request.
+                    return false;
+                }
+                // Send a POST request to server to change the value in the database.
+                $.ajax({
+                    type: "POST",
+                    url: "/edit-book",
+                    data: dataString,
+                    success: function() {
+                        content.attr("before", text).blur();
                     }
-                    // Send post request to server to change the value in the database
-                    $.ajax({
-                        type: "POST",
-                        url: "/edit-book",
-                        data: dataString,
-                        success: function() {
-                            content.attr("before", text).blur();
-                        }
-                    });
-                }
+                });
             }
-        });
+        }
     });
     
-    // add an event listener to handle toggling the menu for adding books
+    // Add an event listener to handle toggling the menu for adding books.
     $("#add-book-btn").on("click", function() {
         $("#add-book-form-popup").toggleClass("popup-hidden");
         $("#book-list-scroll").toggleClass("table-scroll-short");
     });
     
+    // Change the default behaviour of the form submit so that it does not reload the page.
     $("#add-book-form").on("submit", function(e) {
         e.preventDefault();
         let dataString = $(this).serializeArray();
@@ -226,15 +239,35 @@ $(function() {
             url: "/add-book",
             data: dataString,
             success: function(res) {
-                $("#book-list tbody").append(
+                $("#book-list tbody").prepend(
                     createTableRow(res.id, title, author, genre, date)
                 );
-                
+                $(".table-scroll").eq(0).scrollTop(0);
                 $("#book-count").text(++bookCount);
-
+                document.title = document.title.replace(/\[.*?\]/, `[${ bookCount }]`);
                 $("#add-book-form")[0].reset();
             },
             dataType: "json"
+        });
+    });
+
+    // Add an event listener to send the id's of each selected row 
+    // when the mark_delete button is pressed.
+    $("#delete-book-btn").on("click", function() {
+        const checkedRows = Array.from($("#book-list td").find(":checked"))
+            .map(checked => {
+                let row = $(checked).parent().parent();
+                let index = row.data("index");
+                row.remove();
+                return index;
+            });
+        $.ajax({
+            type: "POST",
+            url: "/delete-books",
+            data: { ids: checkedRows },
+            success: function(res) {
+                
+            }
         });
     });
 });

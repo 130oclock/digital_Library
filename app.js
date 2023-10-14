@@ -28,8 +28,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/books', async (req, res) => {
-    const request = "SELECT * FROM books";
-    console.log("GET /books");
+    const request = "SELECT * FROM books WHERE mark_delete = FALSE";
+    //console.log("GET /books");
 
     let conn;
     try {
@@ -75,6 +75,26 @@ app.post('/edit-book', async (req, res) => {
     try {
         conn = await fetchConn();
         conn.query(query, [data.text, data.id]);
+
+        res.sendStatus(200);
+
+    } catch (err) {
+        res.sendStatus(408);
+        throw err;
+    } finally {
+        if (conn) conn.end();
+    }
+});
+
+app.post('/delete-books', async (req, res) => {
+    const data = req.body;
+    const query = `UPDATE books SET mark_delete = TRUE WHERE id IN (?)`;
+    console.log("Post /delete-books:", data.ids);
+
+    let conn;
+    try {
+        conn = await fetchConn();
+        conn.query(query, [data.ids]);
 
         res.sendStatus(200);
 
