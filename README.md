@@ -17,14 +17,14 @@ cd digital_Library
 npm install
 ```
 - Install MariaDB, connect, add a new database, and create a new user
-```sql
+~~~~sql
 mariadb -u root -p -h localhost
 > CREATE DATABASE <database_name>;
 > CREATE USER <username> IDENTIFIED BY <password>;
 > GRANT ALL PRIVILEGES ON <database_name> TO <username>;
 > FLUSH PRIVILEGES;
 > EXIT;
-```
+~~~~
 - Create a .env according to this [example](#example-env)
 - Run the project
 ```bash
