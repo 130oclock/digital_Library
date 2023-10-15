@@ -6,7 +6,22 @@ This project is a Node.js digital library that tracks books and reading activity
 - Run a webapp interface to manage the database
 - Store details about your favourite books
 
-![Screenshot of the web app](./DigitalLibraryTable.png)
+### Features
+
+- Add books
+- Edit books
+- Delete books
+- Select multiple books for deletion
+- Search books by title, author, genre...
+
+### TODO
+
+- Store the number of pages
+- Add a heat map for reading progress
+- Add more style
+- Add dark mode
+- Add json export feature
+- Add genre enumeration
 
 ## Install
 - Clone the repository

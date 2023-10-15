@@ -69,7 +69,7 @@ app.post('/add-book', async (req, res) => {
 app.post('/edit-book', async (req, res) => {
     const data = req.body;
     const query = `UPDATE books SET ${data.column} = ? WHERE id = ?`;
-    console.log("Post /edit-book:", data.column, data.text, data.id);
+    console.log("POST /edit-book:", data.column, data.text, data.id);
     
     let conn;
     try {
@@ -89,7 +89,7 @@ app.post('/edit-book', async (req, res) => {
 app.post('/delete-books', async (req, res) => {
     const data = req.body;
     const query = `UPDATE books SET mark_delete = TRUE WHERE id IN (?)`;
-    console.log("Post /delete-books:", data.ids);
+    console.log("POST /delete-books:", data.ids);
 
     let conn;
     try {

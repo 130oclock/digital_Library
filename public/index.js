@@ -264,10 +264,7 @@ $(function() {
         $.ajax({
             type: "POST",
             url: "/delete-books",
-            data: { ids: checkedRows },
-            success: function(res) {
-                
-            }
+            data: { ids: checkedRows }
         });
     });
 });
