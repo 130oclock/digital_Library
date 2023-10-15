@@ -6,6 +6,8 @@ This project is a Node.js digital library that tracks books and reading activity
 - Run a webapp interface to manage the database
 - Store details about your favourite books
 
+![Screenshot of the web app](./DigitalLibraryTable.png)
+
 ## Install
 - Clone the repository
 ```bash
@@ -32,7 +34,7 @@ node app.js
 ```
 - Navigate to `http://localhost:3000`
 
-### Example .env
+## Example .env
 
 ```ini
 # Environment variables
