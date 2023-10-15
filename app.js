@@ -47,14 +47,14 @@ app.get('/books', async (req, res) => {
 });
 
 app.post('/add-book', async (req, res) => {
-    const insert = "INSERT INTO books (title, author, genre, date) VALUES (?, ?, ?, ?)";
+    const insert = "INSERT INTO books (title, author, genre, date, total_pages) VALUES (?, ?, ?, ?, ?)";
     const data = req.body;
-    console.log("POST /add-book:", data.title, data.author, data.genre, data.date);
+    console.log("POST /add-book:", data.title, data.author, data.genre, data.date, data.pages);
 
     let conn;
     try {
         conn = await fetchConn();
-        await conn.query(insert, [data.title, data.author, data.genre, data.date]);
+        await conn.query(insert, [data.title, data.author, data.genre, data.date, data.pages]);
         let newRowID = await conn.query("SELECT LAST_INSERT_ID()");
 
         res.status(200).send(`{"id":"${newRowID.toString()}"}`);

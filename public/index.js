@@ -47,17 +47,24 @@ function sumCellValues(row) {
  * @param {string} author The author(s) of the book.
  * @param {string} genre The genre(s) of the book.
  * @param {string} date The publication date of the book.
- * @returns A string.
+ * @returns A Jquery.
  */
-function createTableRow(id, title, author, genre, date, status) {
-    const rowString = `<tr data-index="${ id }">
-    <td><input type="checkbox"></td>
-    <td><div column="title" contenteditable spellcheck="false">${   title    }</div></td>
-    <td><div column="author" contenteditable spellcheck="false">${  author   }</div></td>
-    <td><div column="genre" contenteditable spellcheck="false">${   genre    }</div></td>
-    <td><div column="date" contenteditable spellcheck="false">${    date     }</div></td>
-    </tr>`;
-    return rowString;
+function createTableRow(id, title, author, genre, date, page_now = 0, page_total = 0) {
+    let row = $(`<tr data-index="${ id }"></tr>`)
+        .append($('<td><input type="checkbox"></td>'))
+        .append($(`<td><div column="title" contenteditable spellcheck="false">${ title }</div></td>`))
+        .append($(`<td><div column="author" contenteditable spellcheck="false">${ author }</div></td>`))
+        .append($(`<td><div column="genre" contenteditable spellcheck="false">${ genre }</div></td>`))
+        .append($(`<td><div column="date" contenteditable spellcheck="false">${ date }</div></td>`))
+        .append($(`<td></td>`)
+            .append($(`<div column="pages"></div>`)
+                .toggleClass("read-all", (page_total !== 0 && page_now === page_total))
+                .append(`<span column="page" contenteditable spellcheck="false">${ page_now }</span> /`)
+                .append(` <span column="total_pages" contenteditable spellcheck="false">${ page_total }</span>`)
+            )  
+        )
+    ;
+    return row;
 }
 
 /**
@@ -151,7 +158,7 @@ $(function() {
         for (i = 0; i < rows.length; i++) {
             let row = rows[i];
             $("#book-list tbody").append(createTableRow(row.id, row.title, 
-                row.author, row.genre, row.date.substring(0,10)));
+                row.author, row.genre, row.date.substring(0,10), row.page, row.total_pages));
         }
     
         // Sort by title ascending once the table has data.
@@ -201,6 +208,13 @@ $(function() {
                     // so do not send the POST request.
                     return false;
                 }
+
+                if (column === "page") {
+                    let page_total = content.parent().children().eq(1).text();
+                    if (page_total !== 0 && text === page_total) 
+                        content.parent().toggleClass("read-all", true);
+                    else content.parent().toggleClass("read-all", false);
+                }
                 // Send a POST request to server to change the value in the database.
                 $.ajax({
                     type: "POST",
@@ -226,11 +240,12 @@ $(function() {
         let dataString = $(this).serializeArray();
 
         let title = $("#form-book-title").val(), author = $("#form-book-author").val(),
-            genre = $("#form-book-genre").val(), date = $("#form-book-date").val();
+            genre = $("#form-book-genre").val(), date = $("#form-book-date").val(),
+            pages = $("#form-book-pages").val();
     
         // form data validation
-        if (!verifyTextFormat(["title", "author", "genre", "date"], 
-                              [title, author, genre, date])) {
+        if (!verifyTextFormat(["title", "author", "genre", "date", "pages"], 
+                              [title, author, genre, date, pages])) {
             return false;
         }
     
@@ -240,7 +255,7 @@ $(function() {
             data: dataString,
             success: function(res) {
                 $("#book-list tbody").prepend(
-                    createTableRow(res.id, title, author, genre, date)
+                    createTableRow(res.id, title, author, genre, date, 0, pages)
                 );
                 $(".table-scroll").eq(0).scrollTop(0);
                 $("#book-count").text(++bookCount);

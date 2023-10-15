@@ -13,10 +13,10 @@ This project is a Node.js digital library that tracks books and reading activity
 - Delete books
 - Select multiple books for deletion
 - Search books by title, author, genre...
+- Track number of pages read in each book
 
 ### TODO
 
-- Store the number of pages
 - Add a heat map for reading progress
 - Add more style
 - Add dark mode

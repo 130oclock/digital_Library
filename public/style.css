@@ -224,7 +224,12 @@ button:active {
 }
 
 .content-table tbody tr:hover {
-    color: var(--accent-color);
+    background-color: #e4f9ff;
+}
+
+.read-all {
+    border-radius: 8px;
+    background-color: rgb(138, 204, 138);
 }
 
 .table-sortable th {
@@ -239,8 +244,16 @@ button:active {
     border-right: 1px solid #dddddd;
 } 
 
-.table-sortable tr th:last-of-type {
-    width: 100px;
+.table-sortable tr th:nth-child(5),
+.table-sortable tr td:nth-child(5) {
+    width: 80px;
+    text-align: center;
+}
+
+.table-sortable tr th:last-of-type,
+.table-sortable tr td:last-of-type {
+    width: 80px;
+    text-align: center;
 }
 
 .table-sortable .th-sort-asc::after {
