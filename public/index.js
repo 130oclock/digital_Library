@@ -49,7 +49,7 @@ function sumCellValues(row) {
  * @param {string} date The publication date of the book.
  * @returns A Jquery.
  */
-function createTableRow(id, title, author, genre, date, page_now = 0, page_total = 0) {
+function createTableRow(id, title, author, genre, date, pageNow = 0, pageTotal = 0) {
     let row = $(`<tr data-index="${ id }"></tr>`)
         .append($('<td><input type="checkbox"></td>'))
         .append($(`<td><div column="title" contenteditable spellcheck="false">${ title }</div></td>`))
@@ -57,10 +57,11 @@ function createTableRow(id, title, author, genre, date, page_now = 0, page_total
         .append($(`<td><div column="genre" contenteditable spellcheck="false">${ genre }</div></td>`))
         .append($(`<td><div column="date" contenteditable spellcheck="false">${ date }</div></td>`))
         .append($(`<td></td>`)
-            .append($(`<div column="pages"></div>`)
-                .toggleClass("read-all", (page_total !== 0 && page_now === page_total))
-                .append(`<span column="page" contenteditable spellcheck="false">${ page_now }</span> /`)
-                .append(` <span column="total_pages" contenteditable spellcheck="false">${ page_total }</span>`)
+            .append($(`<div column="pages" class="page-count"></div>`)
+                .addClass("read-all", (pageTotal !== 0 && pageNow === pageTotal))
+                .css("background-color", getReadingColor(pageNow, pageTotal))
+                .append(`<span column="page" contenteditable spellcheck="false">${ pageNow }</span> /`)
+                .append(` <span column="total_pages" contenteditable spellcheck="false">${ pageTotal }</span>`)
             )  
         )
     ;
@@ -75,7 +76,7 @@ function createTableRow(id, title, author, genre, date, page_now = 0, page_total
  * column that should be checked.
  * @returns A true if all checks are passed. Returns false if one fails.
  */
-function verifyTextFormat(columnTypes, columnContent) {
+function validateTextFormat(columnTypes, columnContent) {
     /*let dateCheck = /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/;
     if (dateCheck.text($("#form-book-date").val())) {
         
@@ -84,14 +85,17 @@ function verifyTextFormat(columnTypes, columnContent) {
 }
 
 /**
- * Maps an integer value to a color value.
- * @param {number} n The level of the color.
- * @returns A string containing the color information.
+ * Interpolate a percentage between two color values.
+ * @param {number} percent The percentage between the two colors.
+ * @param {int} minR The red value of the first color.
+ * @param {int} minG The green value of the first color.
+ * @param {int} minB The blue value of the first color.
+ * @param {int} maxR The red value of the second color.
+ * @param {int} maxG The green value of the second color.
+ * @param {int} maxB The blue value of the second color.
+ * @returns A string in the format "rgb(r, g, b)".
  */
-function assignColor(intVal) {
-    let minR = 231, minG = 231, minB = 231;
-    let maxR = 91, maxG = 187, maxB = 231;
-    let percent = intVal / 200;
+function assignColor(percent, minR, minG, minB, maxR, maxG, maxB) {
     if (percent > 1) percent = 1;
     let r = Math.round(minR * (1 - percent) + maxR * percent);
     let g = Math.round(minG * (1 - percent) + maxG * percent);
@@ -100,50 +104,40 @@ function assignColor(intVal) {
     return `rgb(${ r },${ g },${ b })`;
 }
 
-function randomLevels() {
-    $("#reading-map div").each(function() {
-        $(this).data("level", Math.random() * 200 | 0);
-    });
-}
-
-function updateHeatMapLevels() {
-    $(".reading-table div").each(function() {
-        let cell = $(this);
-        cell.css("background-color", assignColor(cell.data("level")));
-        cell.children("span").eq(0).text(`${cell.data("level")} pages read`);
-    });
+/**
+ * Returns a color based on progress through the book.
+ * @param {number} pages The number of pages read.
+ * @param {number} pageTotal The number of pages in the book.
+ * @returns A string in the format "rgb(r, g, b)".
+ */
+function getReadingColor(pages, pageTotal) {
+    let minR = 231, minG = 231, minB = 231;
+    let maxR = 138, maxG = 204, maxB = 138; // green color
+    //let maxR = 91, maxG = 187, maxB = 231; // blue color
+    return assignColor(pages / pageTotal, minR, minG, minB, maxR, maxG, maxB);
 }
 
 var bookCount = 0;
 
 // Run once the document has loaded all html elements.
 $(function() {
-    /*const COLUMN = 7;
-    for (i = 0; i < 26; i++) {
-        let rowString = "";
-        for(j = 0; j < COLUMN; j++) {
-            let level = 0;
-            rowString += `<td><div data-index="${ j + (COLUMN * i) }" 
-                data-level="${ level }"><span class="tooltiptext"></span></div></td>`;
-        }
-        $("#reading-map").append(`<tr>${ rowString }</tr>`);
-    }
-    updateHeatMapLevels();*/
-
-    // Add an event listener to sort a column when its header is clicked.
+    // Sort a column when its header is clicked.
     $(".table-sortable thead").on("click", ".sortable", function() {
+        // get the parent table of the header.
         const table = $(this).parents("table").eq(0);
+        // get the index of the column.
         const columnIndex = $(this).index();
+        // check if the column is ascending or descending.
         const ascending = $(this).hasClass("th-sort-asc");
-        // sort the table by column
+        // sort the table by column.
         sortTableByColumn(table, columnIndex, !ascending);
-        // change the column class to match its sorting
+        // update the column's class
         $(this).parent().find(".sortable").removeClass("th-sort-asc th-sort-desc");
         $(this).toggleClass("th-sort-asc", !ascending)
                .toggleClass("th-sort-desc", ascending);
     });
 
-    // Add an event listener to set all checkboxes to the same value as the header checkbox.
+    // Set all checkboxes to the same value as the header checkbox.
     $("#select_all_checkboxes").on("click", function() {
         $(this).closest("table").find("input:checkbox").not(this)
             .prop("checked", this.checked);
@@ -152,70 +146,88 @@ $(function() {
     // Send a GET request for books in the database. Once the rows are received,
     // add each book to the table.
     $.get("/books", (rows) => {
+        // update the number of books listed.
         bookCount = rows.length + 1;
         $("#book-count").text(bookCount);
         document.title = document.title.replace(/\[.*?\]/, `[${ bookCount }]`);
+        // add each book's information to a row.
         for (i = 0; i < rows.length; i++) {
             let row = rows[i];
             $("#book-list tbody").append(createTableRow(row.id, row.title, 
                 row.author, row.genre, row.date.substring(0,10), row.page, row.total_pages));
         }
-    
-        // Sort by title ascending once the table has data.
+        // count the number of completed books.
+        $("#book-complete").text($(".read-all").length);
+        // sort the rows by title ascending.
         sortTableByColumn($("#book-list"), $("#book-list thead .sortable").eq(0).index());
         $("#book-list thead .sortable").eq(0).toggleClass("th-sort-asc", true);
     });
 
-    // Add an event listener to hide rows that do not match the searched content.
+    // Hide rows that do not match the search terms.
     $(".search-input").on("input", function() {
-        $(this).parent().parent().find(".table-scroll").eq(0).scrollTop(0);
-        const tableRows = $(this).parent().parent().find("tbody tr");
-        //const searchIndex = parseInt($(this).parent().find("select").val());
-        const searchableRows = Array.from(tableRows);
-
+        let tableWrapper = $(this).parent(".table-wrapper");
+        // get the search terms.
         const searchQuery = $(this).val().toLowerCase();
+        // get the rows of the table.
+        const searchableRows = Array.from(tableWrapper.find("tbody tr"));
         for (const row of searchableRows) {
-            // show all cells by default
+            // show all cells by default.
             $(row).css("visibility", "visible");
             if (sumCellValues(row).search(searchQuery) === -1) {
                 // if the row does not contain the search query
-                // collapse the row
+                // collapse the row.
                 $(row).css("visibility", "collapse");
             }
         }
+        // scroll the table to the top of the table.
+        tableWrapper.children(".table-scroll").eq(0).scrollTop(0);
     });
 
-    // Add an event listener to store the content of the text field when it is focused.
+    // Store the content of the text field when it is focused.
     $("#book-list tbody").on("focus", "[contenteditable]", function() {
         $(this).attr("before", $(this).text());
     });
 
     // Send a POST request when a book's details are changed.
     $("#book-list tbody").on("keydown", "[contenteditable]", function(e) {
-        // Check if the 'enter' key is pressed and check if the text has been changed.
+        // check if the 'enter' key is pressed in the focused content.
         if (e.which === 13) {
             e.preventDefault();
             let content = $(this);
+            // get the row index where the content was changed.
             let i = content.closest("tr").data("index");
-            let column = content.attr("column")
+            // get the name of the column that was changed.
+            let column = content.attr("column");
+            // get the text before it was edited.
             let before = content.attr("before");
+            // get the text after it was edited.
             let text = content.text();
+            // check if the text has been changed.
             if (text !== before) {
                 let dataString = `column=${column}&id=${i}&text=${text}`;
 
-                if (!verifyTextFormat([column], [text])) {
+                // validate that the form content is in the right format.
+                if (!validateTextFormat([column], [text])) {
                     // the text does not match the correct format, 
                     // so do not send the POST request.
                     return false;
                 }
 
+                // change the color of the indicator if 
+                // the number of pages read was changed.
                 if (column === "page") {
-                    let page_total = content.parent().children().eq(1).text();
-                    if (page_total !== 0 && text === page_total) 
-                        content.parent().toggleClass("read-all", true);
-                    else content.parent().toggleClass("read-all", false);
+                    let indicator = content.parent();
+                    let pageTotal = indicator.children().eq(1).text();
+                    // update the color of the indicator.
+                    indicator.css("background-color", getReadingColor(text, pageTotal))
+                    // check if the book has been completed.
+                    if (pageTotal !== 0 && text === pageTotal) 
+                        indicator.toggleClass("read-all", true);
+                    else indicator.toggleClass("read-all", false);
+                    // update the number of completed books.
+                    $("#book-complete").text($(".read-all").length);
                 }
-                // Send a POST request to server to change the value in the database.
+                // send a POST request to server to edit the value in the database.
                 $.ajax({
                     type: "POST",
                     url: "/edit-book",
@@ -228,35 +240,38 @@ $(function() {
         }
     });
     
-    // Add an event listener to handle toggling the menu for adding books.
+    // Toggle the menu for adding books.
     $("#add-book-btn").on("click", function() {
         $("#add-book-form-popup").toggleClass("popup-hidden");
         $("#book-list-scroll").toggleClass("table-scroll-short");
     });
     
-    // Change the default behaviour of the form submit so that it does not reload the page.
+    // Change the default behaviour of the form submit 
+    // so that it does not reload the page.
     $("#add-book-form").on("submit", function(e) {
         e.preventDefault();
+        // get the content in the form.
         let dataString = $(this).serializeArray();
-
         let title = $("#form-book-title").val(), author = $("#form-book-author").val(),
             genre = $("#form-book-genre").val(), date = $("#form-book-date").val(),
             pages = $("#form-book-pages").val();
     
-        // form data validation
-        if (!verifyTextFormat(["title", "author", "genre", "date", "pages"], 
+        // validate that the form content is in the right format.
+        if (!validateTextFormat(["title", "author", "genre", "date", "pages"], 
                               [title, author, genre, date, pages])) {
             return false;
         }
-    
+        // send a POST request to the server to add a new row.
         $.ajax({
             type: "POST",
             url: "/add-book",
             data: dataString,
             success: function(res) {
+                // get the real index of the row from the database and add a row.
                 $("#book-list tbody").prepend(
                     createTableRow(res.id, title, author, genre, date, 0, pages)
                 );
+                // scroll to the top of the table.
                 $(".table-scroll").eq(0).scrollTop(0);
                 $("#book-count").text(++bookCount);
                 document.title = document.title.replace(/\[.*?\]/, `[${ bookCount }]`);
@@ -266,9 +281,10 @@ $(function() {
         });
     });
 
-    // Add an event listener to send the id's of each selected row 
+    // Send the id's of each selected row 
     // when the mark_delete button is pressed.
     $("#delete-book-btn").on("click", function() {
+        // get the indeces of the selected rows.
         const checkedRows = Array.from($("#book-list td").find(":checked"))
             .map(checked => {
                 let row = $(checked).parent().parent();
@@ -276,6 +292,7 @@ $(function() {
                 row.remove();
                 return index;
             });
+        // send a POST request to mark the books as deleted.
         $.ajax({
             type: "POST",
             url: "/delete-books",

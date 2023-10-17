@@ -24,32 +24,22 @@ body {
     border-radius: 4px;
     box-shadow: 0px 0px 5px 0px var(--shadow-color);
     background-color: #FFF;
-}
 
-.left-side {
     min-width: 600px;
     width: 70%;
     max-width: 1200px;
     margin: 10px;
+}
+
+.panel:first-of-type {
     height: 700px;
 }
 
-.left-wrapper {
+.table-wrapper {
     min-width: 550px;
     width: 91.6%;
     max-width: 1150px;
     margin: 0 auto;
-}
-
-.right-side {
-    width: 162px;
-    margin: 10px;
-    height: 700px;
-}
-
-.right-wrapper {
-    width: 122px;
-    margin: 20px 20px 10px 20px;
 }
 
 /* Text */
@@ -227,9 +217,9 @@ button:active {
     background-color: #e4f9ff;
 }
 
-.read-all {
+.page-count {
     border-radius: 8px;
-    background-color: rgb(138, 204, 138);
+    background-color: rgb(231, 231, 231);
 }
 
 .table-sortable th {
