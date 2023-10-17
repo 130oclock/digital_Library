@@ -58,7 +58,7 @@ function createTableRow(id, title, author, genre, date, pageNow = 0, pageTotal =
         .append($(`<td><div column="date" contenteditable spellcheck="false">${ date }</div></td>`))
         .append($(`<td></td>`)
             .append($(`<div column="pages" class="page-count"></div>`)
-                .addClass("read-all", (pageTotal !== 0 && pageNow === pageTotal))
+                .toggleClass("read-all", (pageTotal !== 0 && pageNow === pageTotal))
                 .css("background-color", getReadingColor(pageNow, pageTotal))
                 .append(`<span column="page" contenteditable spellcheck="false">${ pageNow }</span> /`)
                 .append(` <span column="total_pages" contenteditable spellcheck="false">${ pageTotal }</span>`)
@@ -114,7 +114,9 @@ function getReadingColor(pages, pageTotal) {
     let minR = 231, minG = 231, minB = 231;
     let maxR = 138, maxG = 204, maxB = 138; // green color
     //let maxR = 91, maxG = 187, maxB = 231; // blue color
-    return assignColor(pages / pageTotal, minR, minG, minB, maxR, maxG, maxB);
+    let percent = 0;
+    if (pageTotal !== 0) percent = pages / pageTotal;
+    return assignColor(percent, minR, minG, minB, maxR, maxG, maxB);
 }
 
 var bookCount = 0;
