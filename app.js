@@ -57,7 +57,7 @@ app.post('/add-book', async (req, res) => {
         await conn.query(insert, [data.title, data.author, data.genre, data.date, data.pages]);
         let newRowID = await conn.query("SELECT LAST_INSERT_ID()");
 
-        res.status(200).send(`{"id":"${newRowID.toString()}"}`);
+        res.status(200).send(`{"id":"${parseInt(newRowID[0]['LAST_INSERT_ID()']).toString()}"}`);
     } catch (err) {
         res.sendStatus(408);
         throw err;

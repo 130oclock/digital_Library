@@ -167,7 +167,7 @@ $(function() {
 
     // Hide rows that do not match the search terms.
     $(".search-input").on("input", function() {
-        let tableWrapper = $(this).parent(".table-wrapper");
+        let tableWrapper = $(this).closest(".table-wrapper");
         // get the search terms.
         const searchQuery = $(this).val().toLowerCase();
         // get the rows of the table.

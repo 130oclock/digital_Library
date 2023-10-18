@@ -22,6 +22,10 @@ This project is a Node.js digital library that tracks books and reading activity
 - Add dark mode
 - Add json export feature
 - Add genre enumeration
+- Change to relational database
+- Add table of authors
+- Add table of genres
+- Add table of book series
 
 ## Install
 - Clone the repository
