@@ -205,7 +205,15 @@ button:active {
     transition-duration: 0.1s;
 }
 
-.content-table tbody tr:nth-of-type(even) {
+tbody tr {
+    visibility: collapse;
+}
+
+tbody .visible {
+    visibility: visible;
+}
+
+.content-table tbody tr:nth-child(even of .visible) {
     background-color: #F8F8F0;
 }
 

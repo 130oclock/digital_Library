@@ -50,7 +50,7 @@ function sumCellValues(row) {
  * @returns A Jquery.
  */
 function createTableRow(id, title, author, genre, date, pageNow = 0, pageTotal = 0) {
-    let row = $(`<tr data-index="${ id }"></tr>`)
+    let row = $(`<tr class="visible" data-index="${ id }"></tr>`)
         .append($('<td><input type="checkbox"></td>'))
         .append($(`<td><div column="title" contenteditable spellcheck="false">${ title }</div></td>`))
         .append($(`<td><div column="author" contenteditable spellcheck="false">${ author }</div></td>`))
@@ -174,11 +174,11 @@ $(function() {
         const searchableRows = Array.from(tableWrapper.find("tbody tr"));
         for (const row of searchableRows) {
             // show all cells by default.
-            $(row).css("visibility", "visible");
+            $(row).toggleClass("visible", true);
             if (sumCellValues(row).search(searchQuery) === -1) {
                 // if the row does not contain the search query
                 // collapse the row.
-                $(row).css("visibility", "collapse");
+                $(row).toggleClass("visible", false);
             }
         }
         // scroll the table to the top of the table.

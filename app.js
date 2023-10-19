@@ -17,7 +17,7 @@ async function fetchConn() {
     return conn;
 }
 
-const hostname = process.env.LOCALHOST;
+const hostname = process.env.PUBLISH ? process.env.IP_ADDRESS : process.env.LOCALHOST;
 const port = process.env.DEV_PORT;
 
 app.use(express.static(__dirname));

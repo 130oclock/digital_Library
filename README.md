@@ -61,6 +61,9 @@ IP_ADDRESS  =<ip_address>
 LOCALHOST   =127.0.0.1
 DEV_PORT    =3000
 
+PUBLISH     =false # false : host at localhost only
+                   # true : host at the computer's ip address
+
 # DB CONFIG
 DB_HOST     ="localhost" # The ip address of the db host
 DB_USER     ="<username>"
