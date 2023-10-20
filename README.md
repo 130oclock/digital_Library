@@ -27,6 +27,11 @@ This project is a Node.js digital library that tracks books and reading activity
 - Add table of genres
 - Add table of book series
 
+- Create a new page for adding books instead of a popup form
+- Create a page for each row which can be used to edit
+- Add button to mark selection of books as completed
+    - Set the page to the total pages for each book
+
 ## Install
 - Clone the repository
 ```bash
@@ -62,7 +67,7 @@ LOCALHOST   =127.0.0.1
 DEV_PORT    =3000
 
 PUBLISH     =false # false : host at localhost only
-                   # true : host at the computer's ip address
+                   # true  : host at the computer's ip address
 
 # DB CONFIG
 DB_HOST     ="localhost" # The ip address of the db host

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="public/style.css" />
+        <title>Digital Library</title>
+        <script src="node_modules/jquery/dist/jquery.js"></script>
+    </head>
+    <body>
+        <div class="panel-container">
+            <!--A table of books-->
+            <div class="panel">
+                <div class="table-wrapper">
+                    <!--Search Bar-->
+                    <button id="add-book-btn">Add Book</button>
+                    <!--Add Book Form-->
+                    <div class="form-popup popup-hidden" id="add-book-form-popup">
+                        <form action="/add-book" method="post" class="form-container" id="add-book-form">
+                            <button type="submit">Submit</button>
+                            <span class="input-fillspace">
+                                <div class="form-input-wrapper">
+                                    <input name="title" id="form-book-title" type="text" placeholder="Title" required>
+                                    <input name="author" id="form-book-author" type="text" placeholder="Author" required>
+                                    <input name="genre" id="form-book-genre" type="text" placeholder="Genre" required>
+                                    <input name="date" id="form-book-date" type="text" placeholder="YYYY-MM-DD" required>
+                                    <input name="pages" id="form-book-pages" type="text" placeholder="Pages" required>
+                                </div>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="public/edit-book.js"></script>
+</html>

@@ -217,12 +217,12 @@ tbody .visible {
     background-color: #F8F8F0;
 }
 
-.content-table tbody tr:last-of-type {
-    border-bottom: 2px solid var(--accent-color);
-}
-
 .content-table tbody tr:hover {
     background-color: #e4f9ff;
+}
+
+.content-table tbody tr:last-of-type {
+    border-bottom: 2px solid var(--accent-color);
 }
 
 .page-count {
@@ -245,7 +245,6 @@ tbody .visible {
 .table-sortable tr th:nth-child(5),
 .table-sortable tr td:nth-child(5) {
     width: 80px;
-    text-align: center;
 }
 
 .table-sortable tr th:last-of-type,
