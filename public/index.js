@@ -8,22 +8,42 @@
  * @returns A Jquery.
  */
 function createTableRow(id, title, author, genre, date, pageNow = 0, pageTotal = 0) {
-    let row = $(`<tr class="visible" data-index="${ id }"></tr>`)
+    let row = $(`<tr data-index="${ id }"></tr>`)
         .append($('<td><input type="checkbox"></td>'))
-        .append($(`<td><div column="title" contenteditable spellcheck="false">${ title }</div></td>`))
-        .append($(`<td><div column="author" contenteditable spellcheck="false">${ author }</div></td>`))
-        .append($(`<td><div column="genre" contenteditable spellcheck="false">${ genre }</div></td>`))
-        .append($(`<td><div column="date" contenteditable spellcheck="false">${ date }</div></td>`))
+        .append($(`<td><div column="title">${   title   }</div></td>`))
+        .append($(`<td><div column="author">${  author  }</div></td>`))
+        .append($(`<td><div column="genre">${   genre   }</div></td>`))
+        .append($(`<td><div column="date">${    date    }</div></td>`))
         .append($(`<td></td>`)
             .append($(`<div column="pages" class="page-count"></div>`)
                 .toggleClass("read-all", (pageTotal !== 0 && pageNow === pageTotal))
                 .css("background-color", getReadingColor(pageNow, pageTotal))
-                .append(`<span column="page" contenteditable spellcheck="false">${ pageNow }</span> /`)
-                .append(` <span column="total_pages" contenteditable spellcheck="false">${ pageTotal }</span>`)
+                .append(`<span column="page">${ pageNow }</span> /`)
+                .append(` <span column="total_pages">${ pageTotal }</span>`)
             )  
-        )
-    ;
+        );
     return row;
+}
+
+/**
+ * Returns the text value within a table cell.
+ * @param {Array} row The row containing the cell.
+ * @param {number} index The index of the cell in the row.
+ * @returns A string containing the text value of the cell.
+ */
+function getCellValue(row, index) {
+    return $(row).children("td").eq(index).text().trim();
+}
+
+/**
+ * Returns a string that contains the text from all cells in the row.
+ * @param {Array} row The row to sum.
+ * @returns A string cintaining the text value of all cells.
+ */
+function sumCellValues(row) {
+    const cells = Array.from($(row).children("td"))
+        .map(cell => $(cell).text().toLowerCase().replace(",", ""));
+    return cells.join('');
 }
 
 /**
@@ -58,33 +78,12 @@ function sortTableByColumn(table, column) {
 }
 
 /**
- * Returns the text value within a table cell.
- * @param {Array} row The row containing the cell.
- * @param {number} index The index of the cell in the row.
- * @returns A string containing the text value of the cell.
- */
-function getCellValue(row, index) {
-    return $(row).children("td").eq(index).text().trim();
-}
-
-/**
- * Returns a string that contains the text from all cells in the row.
- * @param {Array} row The row to sum.
- * @returns A string cintaining the text value of all cells.
- */
-function sumCellValues(row) {
-    const cells = Array.from($(row).children("td"))
-        .map(cell => $(cell).text().toLowerCase().replace(",", ""));
-    return cells.join();
-}
-
-/**
  * Changes the text displaying the number of books listed.
  * @param {number} count The number of books.
  */
 function updateBookCount(count) {
-    $("#book-count").text(bookCount);
-    document.title = document.title.replace(/\[.*?\]/, `[${ bookCount }]`);
+    $("#book-count").text(count);
+    document.title = document.title.replace(/\[.*?\]/, `[${ count }]`);
 }
 
 /**
@@ -146,50 +145,15 @@ function getReadingColor(pages, pageTotal) {
     return assignColor(percent, minR, minG, minB, maxR, maxG, maxB);
 }
 
-// Variable declaration
-var bookCount = 0;
-
 // Run once the document has loaded all html elements.
 $(function() {
     // ==========================================
     // ===        Table Initialization        ===
     // ==========================================
 
-    // Hide rows that do not match the search terms.
-    $(".search-input").on("input", function() {
-        let tableWrapper = $(this).closest(".table-wrapper");
-        // get the search terms.
-        const searchQuery = $(this).val().toLowerCase();
-        // get the rows of the table.
-        const searchableRows = Array.from(tableWrapper.find("tbody tr"));
-        for (const row of searchableRows) {
-            // show all cells by default.
-            $(row).toggleClass("visible", true);
-            if (sumCellValues(row).search(searchQuery) === -1) {
-                // if the row does not contain the search query
-                // collapse the row.
-                $(row).toggleClass("visible", false);
-            }
-        }
-        // scroll the table to the top of the table.
-        tableWrapper.children(".table-scroll").eq(0).scrollTop(0);
-    });
-
-    // Sort a column when its header is clicked.
-    $(".table-sortable thead").on("click", ".sortable", function() {
-        // get the index of the column and its parent table.
-        const table = $(this).parents("table").eq(0);
-        const columnIndex = $(this).index();
-        // sort the table by column.
-        sortTableByColumn(table, columnIndex);
-    });
-    
     // Send a GET request for books in the database. Once the rows are received,
     // add each book to the table.
-    $.get("/get-book-rows", (rows) => {
-        // update the number of books listed.
-        bookCount = rows.length;
-        updateBookCount(bookCount);
+    $.get("/books/all", (rows) => {
         // create a new row for each book.
         rows.forEach(row => {
             $("#book-list tbody").append(createTableRow(
@@ -202,14 +166,44 @@ $(function() {
                 row.pageTotal
             ));
         });
-        // count the number of completed books.
+        // update the number of books listed.
+        updateBookCount(rows.length);
         updateCompletedBookCount();
         // sort the rows by title ascending.
         sortTableByColumn($("#book-list"), $("#book-list thead th").eq(1).index());
     });
 
+    // Hide rows that do not match the search terms.
+    $("#search-input").on("input", function() {
+        // get the rows of the table.
+        let tableContainer = $(this).parents(".panel").children(".table-container");
+        const searchableRows = Array.from(tableContainer.find("tbody tr"));
+        // get the search query
+        const searchQuery = $(this).val().toLowerCase();
+
+        for (const row of searchableRows) {
+            // show all cells by default.
+            $(row).toggleClass("hidden", false);
+            if (sumCellValues(row).search(searchQuery) === -1) {
+                // hide if the row does not contain the search query
+                $(row).toggleClass("hidden", true);
+            }
+        }
+        // scroll the table to the top of the table.
+        tableContainer.children(".table-scroll").eq(0).scrollTop(0);
+    });
+
+    // Sort a column when its header is clicked.
+    $(".sortable-table thead").on("click", ".sortable", function() {
+        // get the index of the column and its parent table.
+        const table = $(this).parents("table").eq(0);
+        const columnIndex = $(this).index();
+        // sort the table by column.
+        sortTableByColumn(table, columnIndex);
+    });
+
     /*// Send a GET request for authors in the database.
-    $.get("/get-authors", (rows) => {
+    $.get("/authors/all", (rows) => {
         const ids = rows.map(author => author.id);
         const names = rows.map(author => author.fullName);
         console.log(ids, names);
@@ -236,6 +230,7 @@ $(function() {
                 row.remove();
                 return index;
             });
+        updateBookCount($("#book-list tbody tr").length);
         // send a POST request to mark the books as deleted.
         $.ajax({
             type: "POST",

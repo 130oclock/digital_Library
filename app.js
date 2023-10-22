@@ -27,7 +27,11 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/get-book-rows', async (req, res) => {
+app.get('/add-book', (req, res) => {
+    res.sendFile(__dirname + '/public/add-book.html');
+});
+
+app.get('/books/all', async (req, res) => {
     // get all rows from the book table
     // and all genres and authors related to that book.
     const request = 
@@ -84,7 +88,64 @@ app.get('/get-book-rows', async (req, res) => {
     }
 });
 
-app.get('/get-authors', async (req, res) => {
+app.get('/books/:id', async (req, res) => {
+    // get all rows from the book table
+    // and all genres and authors related to that book.
+    const request = 
+    `SELECT
+         books.book_id AS id,
+         books.title AS title,
+         books.page AS page,
+         books.total_pages AS pageTotal,
+         books.published_date AS date,
+         authors_ AS authors,
+         genres_ AS genres
+     FROM books
+     INNER JOIN (
+         SELECT
+             books.book_id AS book_id,
+             GROUP_CONCAT(
+                 CONCAT_WS(' ', first_name, middle_name, last_name)
+                 ORDER BY last_name ASC
+                 SEPARATOR ', ') AS authors_
+         FROM books
+         INNER JOIN book_authors
+         ON book_authors.book_id = books.book_id
+         INNER JOIN authors
+         ON book_authors.author_id = authors.author_id
+         GROUP BY books.book_id
+     ) authors_ ON books.book_id = authors_.book_id
+     INNER JOIN (
+        SELECT
+            books.book_id AS book_id,
+            GROUP_CONCAT(
+                genre_name
+                SEPARATOR ', ') AS genres_
+        FROM books
+        INNER JOIN book_genres
+        ON book_genres.book_id = books.book_id
+        INNER JOIN genres
+        ON book_genres.genre_id = genres.genre_id
+        GROUP BY books.book_id
+    ) genres_ ON books.book_id = genres_.book_id
+     WHERE books.book_id = ?
+    `;
+
+    let conn;
+    try {
+        conn = await fetchConn();
+        const rows = await conn.query(request, [req.params.id]);
+
+        res.status(200).send(rows);
+    } catch (err) {
+        res.sendStatus(408);
+        throw err;
+    } finally {
+        if (conn) conn.end();
+    }
+});
+
+app.get('/authors/all', async (req, res) => {
     // get all rows from the author table
     const request = 
     `SELECT
@@ -128,7 +189,7 @@ app.get('/get-authors', async (req, res) => {
     }
 });*/
 
-app.post('/edit-data', async (req, res) => {
+/*app.post('/edit-data', async (req, res) => {
     const data = req.body;
     let query = "";
     
@@ -136,12 +197,6 @@ app.post('/edit-data', async (req, res) => {
         case "title":
             query = `UPDATE books SET title = ? WHERE book_id = ?`;
             console.log("POST /edit-data:", "Changed title of book to", data.text, "at row", data.id);
-            break;
-        case "author":
-
-            break;
-        case "genre":
-
             break;
         case "date":
             query = `UPDATE books SET published_date = ? WHERE book_id = ?`;
@@ -154,6 +209,12 @@ app.post('/edit-data', async (req, res) => {
         case "total_pages":
             query = `UPDATE books SET total_pages = ? WHERE book_id = ?`;
             console.log("POST /edit-data:", "Changed totla pages of book to", data.text, "at row", data.id);
+            break;
+        case "author":
+
+            break;
+        case "genre":
+
             break;
         default:
             res.sendStatus(500);
@@ -172,7 +233,7 @@ app.post('/edit-data', async (req, res) => {
     } finally {
         if (conn) conn.end();
     }
-});
+});*/
 
 app.post('/delete-books', async (req, res) => {
     const data = req.body;
