@@ -23,7 +23,7 @@
     position: sticky;
     border-bottom: 4px solid var(--shadow-color);
     background-color: var(--accent-color);
-    color: white;
+    color: var(--panel-color);
     text-align: left;
     font-weight: bold;
 }
@@ -35,11 +35,11 @@
 }
 
 .content-table tbody tr {
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid var(--shadow-color);
 }
 
 .content-table tbody tr:hover {
-    background-color: #e4f9ff;
+    color: var(--accent-shadow-color);
 }
 
 .content-table tbody tr:last-of-type {
@@ -47,7 +47,7 @@
 }
 
 .content-table tbody tr:nth-child(even of tr:not(.hidden)) {
-    background-color: #F8F8F0;
+    background-color: var(--background-color);
 }
 
 tbody tr {
@@ -55,6 +55,10 @@ tbody tr {
 }
 
 tbody tr.hidden {
+    visibility: collapse;
+}
+
+tbody tr.deleted {
     visibility: collapse;
 }
 
@@ -66,22 +70,25 @@ tbody tr.hidden {
 .sortable-table tr th:first-of-type,
 .sortable-table tr td:first-of-type {
     padding: 0 8px;
-    border-right: 1px solid #dddddd;
-    width: 20px;
+    border-right: 1px solid var(--shadow-color);
+    width: 14px;
 }
 
 .sortable-table tr th:last-of-type,
 .sortable-table tr td:last-of-type {
+    padding: 0 8px;
+    border-left: 1px solid var(--shadow-color);
+    width: 14px;
     text-align: center;
-    width: 80px;
+    cursor: pointer;
 }
 
 .sortable-table .th-sort-asc::after {
-    content: " \25b4";
+    content: " \25be";
 }
 
 .sortable-table .th-sort-desc::after {
-    content: " \25be";
+    content: " \25b4";
 }
 
 .sortable-table .th-sort-asc,
@@ -91,4 +98,6 @@ tbody tr.hidden {
 
 .page-count {
     border-radius: 8px;
+    color: black;
+    text-align: center;
 }

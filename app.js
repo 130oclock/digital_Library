@@ -34,31 +34,31 @@ app.get('/add-book', (req, res) => {
 app.get('/books/all', async (req, res) => {
     // get all rows from the book table
     // and all genres and authors related to that book.
-    const request = 
-    `SELECT
-         books.book_id AS id,
-         books.title AS title,
-         books.page AS page,
-         books.total_pages AS pageTotal,
-         books.published_date AS date,
-         authors_ AS authors,
-         genres_ AS genres
-     FROM books
-     INNER JOIN (
-         SELECT
-             books.book_id AS book_id,
-             GROUP_CONCAT(
-                 CONCAT_WS(' ', first_name, middle_name, last_name)
-                 ORDER BY last_name ASC
-                 SEPARATOR ', ') AS authors_
-         FROM books
-         INNER JOIN book_authors
-         ON book_authors.book_id = books.book_id
-         INNER JOIN authors
-         ON book_authors.author_id = authors.author_id
-         GROUP BY books.book_id
-     ) authors_ ON books.book_id = authors_.book_id
-     INNER JOIN (
+    const request = `
+    SELECT
+        books.book_id AS id,
+        books.title AS title,
+        books.page AS page,
+        books.total_pages AS pageTotal,
+        books.published_date AS date,
+        authors_ AS authors,
+        genres_ AS genres
+    FROM books
+    INNER JOIN (
+        SELECT
+            books.book_id AS book_id,
+            GROUP_CONCAT(
+                CONCAT_WS(' ', first_name, middle_name, last_name)
+                ORDER BY last_name ASC
+                SEPARATOR ', ') AS authors_
+        FROM books
+        INNER JOIN book_authors
+        ON book_authors.book_id = books.book_id
+        INNER JOIN authors
+        ON book_authors.author_id = authors.author_id
+        GROUP BY books.book_id
+    ) authors_ ON books.book_id = authors_.book_id
+    INNER JOIN (
         SELECT
             books.book_id AS book_id,
             GROUP_CONCAT(
@@ -71,8 +71,7 @@ app.get('/books/all', async (req, res) => {
         ON book_genres.genre_id = genres.genre_id
         GROUP BY books.book_id
     ) genres_ ON books.book_id = genres_.book_id
-     WHERE mark_delete = FALSE
-    `;
+    WHERE mark_delete = FALSE`;
 
     let conn;
     try {
@@ -91,45 +90,44 @@ app.get('/books/all', async (req, res) => {
 app.get('/books/:id', async (req, res) => {
     // get all rows from the book table
     // and all genres and authors related to that book.
-    const request = 
-    `SELECT
-         books.book_id AS id,
-         books.title AS title,
-         books.page AS page,
-         books.total_pages AS pageTotal,
-         books.published_date AS date,
-         authors_ AS authors,
-         genres_ AS genres
-     FROM books
-     INNER JOIN (
-         SELECT
-             books.book_id AS book_id,
-             GROUP_CONCAT(
-                 CONCAT_WS(' ', first_name, middle_name, last_name)
-                 ORDER BY last_name ASC
-                 SEPARATOR ', ') AS authors_
-         FROM books
-         INNER JOIN book_authors
-         ON book_authors.book_id = books.book_id
-         INNER JOIN authors
-         ON book_authors.author_id = authors.author_id
-         GROUP BY books.book_id
-     ) authors_ ON books.book_id = authors_.book_id
-     INNER JOIN (
+    const request = `
+    SELECT
+        books.book_id AS id,
+        books.title AS title,
+        books.page AS page,
+        books.total_pages AS pageTotal,
+        books.published_date AS date,
+        authors_ AS authors,
+        genres_ AS genres
+    FROM books
+    INNER JOIN (
         SELECT
             books.book_id AS book_id,
             GROUP_CONCAT(
-                genre_name
-                SEPARATOR ', ') AS genres_
+                CONCAT_WS(' ', first_name, middle_name, last_name)
+                ORDER BY last_name ASC
+                SEPARATOR ', ') AS authors_
         FROM books
-        INNER JOIN book_genres
-        ON book_genres.book_id = books.book_id
-        INNER JOIN genres
-        ON book_genres.genre_id = genres.genre_id
+        INNER JOIN book_authors
+        ON book_authors.book_id = books.book_id
+        INNER JOIN authors
+        ON book_authors.author_id = authors.author_id
         GROUP BY books.book_id
+    ) authors_ ON books.book_id = authors_.book_id
+    INNER JOIN (
+    SELECT
+        books.book_id AS book_id,
+        GROUP_CONCAT(
+            genre_name
+            SEPARATOR ', ') AS genres_
+    FROM books
+    INNER JOIN book_genres
+    ON book_genres.book_id = books.book_id
+    INNER JOIN genres
+    ON book_genres.genre_id = genres.genre_id
+    GROUP BY books.book_id
     ) genres_ ON books.book_id = genres_.book_id
-     WHERE books.book_id = ?
-    `;
+    WHERE books.book_id = ?`;
 
     let conn;
     try {
@@ -147,13 +145,12 @@ app.get('/books/:id', async (req, res) => {
 
 app.get('/authors/all', async (req, res) => {
     // get all rows from the author table
-    const request = 
-    `SELECT
-         authors.author_id AS id,
-         CONCAT_WS(' ', first_name, middle_name, last_name) AS fullName
-     FROM authors
-     ORDER BY fullName ASC
-    `;
+    const request = `
+    SELECT
+        authors.author_id AS id,
+        CONCAT_WS(' ', first_name, middle_name, last_name) AS fullName
+    FROM authors
+    ORDER BY fullName ASC`;
 
     let conn;
     try {

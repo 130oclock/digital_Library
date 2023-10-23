@@ -1,15 +1,28 @@
 // Run once the document has loaded all html elements.
 $(function() {
     // ==========================================
+    // ===          Compare Authors           ===
+    // ==========================================
+
+    /*
+    // Send a GET request for authors in the database.
+    $.get("/authors/all", (rows) => {
+        const ids = rows.map(author => author.id);
+        const names = rows.map(author => author.fullName);
+        console.log(ids, names);
+    });*/
+
+    // ==========================================
+    // ===           Compare Genres           ===
+    // ==========================================
+
+
+
+    // ==========================================
     // ===            Adding Books            ===
     // ==========================================
+
     /*
-    // Toggle the menu for adding books.
-    $("#add-book-btn").on("click", function() {
-        $("#add-book-form-popup").toggleClass("popup-hidden");
-        $("#book-list-scroll").toggleClass("table-scroll-short");
-    });
-    
     // Change the default behaviour of the form submit 
     // so that it does not reload the page.
     $("#add-book-form").on("submit", function(e) {

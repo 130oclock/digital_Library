@@ -1,0 +1,23 @@
+.form-container {
+    width: 100%;
+    font-size: 0.9em;
+
+    display: grid;
+    grid-template-columns: auto 4fr auto 1fr;
+    grid-template-rows: auto 1fr 1fr auto;
+    grid-gap: 16px;
+    align-items: start;
+}
+
+.full-width {
+    grid-column: 1 / 5;
+}
+
+.multi-input {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+textarea {
+    resize: vertical;
+}

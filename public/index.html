@@ -3,46 +3,56 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="public/styles/styles.css" />
         <link rel="stylesheet" type="text/css" href="public/styles/table-styles.css" />
         <script src="node_modules/jquery/dist/jquery.js"></script>
         <title>Digital Library [0]</title>
     </head>
     <body>
-        <div style="text-align: center;">
-            <h1>Digital Library</h1>
-            <span>[<span id="book-count">0</span>] books listed. [<span id="book-complete">0</span>] books completed.</span>
+        <div class="header">
+            <div style="text-align: center;">
+                <h1>Digital Library</h1>
+                <span>[<span id="book-count">0</span>] books listed. [<span id="book-complete">0</span>] books completed.</span>
+            </div>
         </div>
-        <div class="centered panel-wrapper">
-            <div class="panel">
-                <div class="input-container">
-                    <input type="text" id="search-input" class="input-item" 
-                        placeholder="Search by Title, Author, Genre...">
-                    </input>
-                    <a href="/add-book" id="add-book-btn" class="btn">Add Book</a>
-                </div>
-                <div class="table-container">
-                    <div class="table-scroll">
-                        <table id="book-list" class="content-table sortable-table">
-                            <thead>
-                                <tr>
-                                    <th><input type="checkbox" id="select_all_checkboxes"></th>
-                                    <th class="sortable">Title</th>
-                                    <th class="sortable">Author</th>
-                                    <th class="sortable">Genre</th>
-                                    <th class="sortable" style="width: 80px;">Date</th>
-                                    <th>Pages</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+        <div class="main">
+            <div class="centered panel-wrapper">
+                <div class="panel">
+                    <div class="input-container">
+                        <input type="text" id="search-input" class="input-item" 
+                            placeholder="Search by Title, Author, Genre...">
+                        </input>
+                        <a href="/add-book" id="add-book-btn" class="btn" draggable="false">Add Book</a>
+                    </div>
+                    <div class="table-container">
+                        <div class="table-scroll">
+                            <table id="book-list" class="content-table sortable-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="select_all_checkboxes"></th>
+                                        <th class="sortable">Title</th>
+                                        <th class="sortable">Author</th>
+                                        <th class="sortable">Genre</th>
+                                        <th class="sortable" style="width: 80px;">Date</th>
+                                        <th style="width: 80px;">Pages</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <button id="delete-book-btn" class="btn">Delete Selected</button>
+                        <button id="read-book-btn" class="btn">Mark As Read</button>
                     </div>
                 </div>
-                <div class="input-container">
-                    <button id="delete-book-btn" class="btn">Delete Selected</button>
-                </div>
             </div>
+        </div>
+        <div class="footer">
+
         </div>
     </body>
     <script src="public/index.js"></script>
