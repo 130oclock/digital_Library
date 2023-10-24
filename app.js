@@ -22,6 +22,7 @@ const port = process.env.DEV_PORT;
 
 app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true }));
+app.use('/favicon.ico', express.static(__dirname + '/public/images/favicon.ico'));
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');

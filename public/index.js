@@ -172,7 +172,7 @@ $(function() {
     // Hide rows that do not match the search terms.
     $("#search-input").on("input", function() {
         // get the search query.
-        const searchQuery = $(this).val().toLowerCase().split(" ").filter(i => i);
+        const searchQuery = $(this).val().toLowerCase().trim().split(" ");
 
         for (let i = 0; i < cachedRowText.length; i++) {
             let cachedRow = cachedRowText[i];

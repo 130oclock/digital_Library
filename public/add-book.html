@@ -5,40 +5,48 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="public/styles/styles.css" />
         <link rel="stylesheet" type="text/css" href="public/styles/form-styles.css" />
+        <link rel="icon" href="/public/images/favicon.ico" />
         <script src="node_modules/jquery/dist/jquery.js"></script>
         <title>Digital Library</title>
     </head>
     <body>
-        <div class="header">
+        <header class="header">
             <div style="text-align: center;">
                 <h1>Add a Book</h1>
             </div>
-        </div>
-        <div class="main">
+        </header>
+        <main class="main">
             <div class="centered panel-wrapper">
                 <div class="panel">
                     <form action="/add-book" method="post" id="add-book-form" class="form-container" style="min-height: 500px;">
                         <label for="form-book-title">Title</label>
-                        <input type="text" name="title" id="form-book-title" autocomplete="off" required>
+                        <input type="text" name="title" id="form-book-title" autocomplete="off">
                         <label for="form-book-date">Date</label>
-                        <input type="date" name="date" id="form-book-date" autocomplete="off" required>
+                        <input type="date" name="date" id="form-book-date" autocomplete="off">
                         <label for="form-book-author">Author(s)</label>
-                        <div id="author-multi-input" class="multi-input">
-                            <input type="text" name="author" id="form-book-author" placeholder="Full name" autocomplete="off" required>
+                        <div id="author-tags-input" class="tags-input">
+                            <ul id="author-tags" class="tag-container"></ul>
+                            <input type="text" name="author" id="form-book-author" list="authors-list" 
+                                placeholder="Full name" autocomplete="off">
+                            <datalist id="authors-list"></datalist>
                         </div>
                         <label for="form-book-pages">Total Pages</label>
-                        <input type="text" name="pages" id="form-book-pages" placeholder="234" autocomplete="off" required>
+                        <input type="number" name="pages" id="form-book-pages" min="1" max="30000" 
+                            placeholder="342" autocomplete="off">
                         <label for="form-book-genre">Genre(s)</label>
-                        <div id="genre-multi-input" class="multi-input">
-                            <textarea name="genre" id="form-book-genre" rows="2" 
-                            placeholder="Fiction, Fantasy, Mystery..." autocomplete="off" required></textarea>
+                        <div id="genre-tags-input" class="tags-input">
+                            <ul id="author-tags" class="tag-container"></ul>
+                            <input type="text" name="genre" id="form-book-genre"
+                                placeholder="Fiction, Fantasy, Mystery..." autocomplete="off"></input>
                         </div>
                         <button type="submit" class="btn full-width">Add Book</button>
                     </form>
                 </div>
             </div>
-        </div>
-        <div class="footer"></div>
+        </main>
+        <footer class="footer">
+
+        </footer>
     </body>
     <script src="public/form-validation.js"></script>
     <script src="public/add-book.js"></script>
