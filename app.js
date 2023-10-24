@@ -32,6 +32,10 @@ app.get('/add-book', (req, res) => {
     res.sendFile(__dirname + '/public/add-book.html');
 });
 
+app.get('/genres', (req, res) => {
+    res.sendFile(__dirname + '/public/lists/genres.json');
+});
+
 app.get('/books/all', async (req, res) => {
     // get all rows from the book table
     // and all genres and authors related to that book.
@@ -149,9 +153,9 @@ app.get('/authors/all', async (req, res) => {
     const request = `
     SELECT
         authors.author_id AS id,
-        CONCAT_WS(' ', first_name, middle_name, last_name) AS fullName
+        CONCAT_WS(' ', first_name, middle_name, last_name) AS name
     FROM authors
-    ORDER BY fullName ASC`;
+    ORDER BY name ASC`;
 
     let conn;
     try {
