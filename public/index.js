@@ -1,20 +1,20 @@
 /**
- * Creates a string to be used as an id for row elements in a table.
- * @param {number} id The id of the book.
- * @returns An id for the row element.
+ * Generates a standardized HTML id for a row.
+ * @param {Number} id   The id number of the book.
+ * @returns A string containing the id of the row element.
  */
 function createRowID(id) {
     return "row-" + id;
 }
 
 /**
- * Returns an HTML formatted string containing the book data.
- * @param {number} id The id number of the row.
- * @param {string} title The title of the book.
- * @param {string} author The author(s) of the book.
- * @param {string} genre The genre(s) of the book.
- * @param {string} date The publication date of the book.
- * @returns A string containing the HTML of a row.
+ * Generates a string containing the HTML elements for a row.
+ * @param {Number} id       The id number of the book.
+ * @param {String} title    The title of the book.
+ * @param {String} author   The author(s) of the book.
+ * @param {String} genre    The genre(s) of the book.
+ * @param {String} date     The publication date of the book.
+ * @returns A string containing the HTML elements for a row.
  */
 function createTableRow(id, title, author, genre, date, pageNow, pageTotal) {
     return `
@@ -31,14 +31,16 @@ function createTableRow(id, title, author, genre, date, pageNow, pageTotal) {
             <span column="page">${ pageNow }</span> / <span column="total_pages">${ pageTotal }</span>
             </div>
         </td>
-        <td><i class='fa fa-pencil'></i></td>
+        <td><a href="/books/${ id }" class="edit-btn">
+            <i class='fa fa-pencil'></i>
+        </a></td>
     </tr>`;
 }
 
 /**
- * Returns the text value within a table cell.
- * @param {Array} row The row containing the cell.
- * @param {number} index The index of the cell in the row.
+ * Gets the trimmed text value from a cell in a row.
+ * @param {Array} row       The row containing the cell.
+ * @param {Number} index    The index of the cell in the row.
  * @returns A string containing the text value of the cell.
  */
 function getCellValue(row, index) {
@@ -47,56 +49,37 @@ function getCellValue(row, index) {
 
 /**
  * Sorts the rows of a table based on the content of a specific column.
- * @param {HTMLTableElement} table  The table to sort.
- * @param {number} column The index of the column to sort.
- * @param {boolean} asc  Determine if the sorting will be ascending.
+ * @param {HTMLTableElement} table  The table to be sorted.
+ * @param {Number} column           The index of the column to sort by.
  */
 function sortTableByColumn(table, column) {
-    const tableBody = table.find("tbody");
     const headers = table.find("th");
     const columnHeader = headers.eq(column);
-    // check if the column is ascending or descending.
-    const asc = columnHeader.hasClass("th-sort-asc");
+    const tableBody = table.find("tbody");
     const rows = tableBody.find("tr").toArray();
-
-    var sortedRows = rows.sort((r1, r2) => ((a, b) =>
+    // Check if the column is ascending or descending.
+    const asc = columnHeader.hasClass("th-sort-asc");
+    // Sort the rows in the table and update their order.
+    rows.sort((r1, r2) => ((a, b) =>
             b.localeCompare(a)
         )(getCellValue(asc ? r1 : r2, column), 
           getCellValue(asc ? r2 : r1, column))
     ).forEach(row => tableBody.append(row));
-
-    // update the column's class to match its sorting direction
+    // Mark the sorting direction in the header's class.
     headers.removeClass("th-sort-asc th-sort-desc");
     columnHeader.toggleClass("th-sort-asc", !asc)
                 .toggleClass("th-sort-desc", asc);
 }
 
 /**
- * Changes the text displaying the number of books listed.
- * @param {number} count The number of books.
- */
-function updateBookCount(count) {
-    $("#book-count").text(count);
-    document.title = document.title.replace(/\[.*?\]/, `[${ count }]`);
-}
-
-/**
- * Counts the number of completed books.
- * A book is completed when all of its pages are read.
- */
-function updateCompletedBookCount() {
-    $("#book-complete").text($(".read-all").length);
-}
-
-/**
  * Interpolate a percentage between two color values.
- * @param {number} percent The percentage between the two colors.
- * @param {int} minR The red value of the first color.
- * @param {int} minG The green value of the first color.
- * @param {int} minB The blue value of the first color.
- * @param {int} maxR The red value of the second color.
- * @param {int} maxG The green value of the second color.
- * @param {int} maxB The blue value of the second color.
+ * @param {Number} percent  The percentage between the two colors.
+ * @param {Number} minR     The red value of the first color.
+ * @param {Number} minG     The green value of the first color.
+ * @param {Number} minB     The blue value of the first color.
+ * @param {Number} maxR     The red value of the second color.
+ * @param {Number} maxG     The green value of the second color.
+ * @param {Number} maxB     The blue value of the second color.
  * @returns A string in the format "rgb(r, g, b)".
  */
 function assignColor(percent, minR, minG, minB, maxR, maxG, maxB) {
@@ -109,9 +92,10 @@ function assignColor(percent, minR, minG, minB, maxR, maxG, maxB) {
 }
 
 /**
- * Returns a color based on progress through the book.
- * @param {number} pages The number of pages read.
- * @param {number} pageTotal The number of pages in the book.
+ * Calculates the percentage of the book that has been read and 
+ * returns a color indicative of the progress.
+ * @param {Number} pages        The number of pages read.
+ * @param {Number} pageTotal    The number of pages in the book.
  * @returns A string in the format "rgb(r, g, b)".
  */
 function getReadingColor(pages, pageTotal) {
@@ -123,6 +107,7 @@ function getReadingColor(pages, pageTotal) {
     return assignColor(percent, minR, minG, minB, maxR, maxG, maxB);
 }
 
+// An array of the text in each row for faster searching.
 var cachedRowText = new Array();
 
 // Run once the document has loaded all html elements.
@@ -131,14 +116,12 @@ $(function() {
     // ===        Table Initialization        ===
     // ==========================================
 
-    // Send a GET request for books in the database. Once the rows are received,
-    // add each book to the table.
+    // GET all books from the database and create a new row in the table
+    // for each book.
     $.get("/books/all", (rows) => {
         var bookTable = $("#book-list");
         var rowElements = '';
-        // generate a cached list of search terms.
-        let rowLength = rows.length;
-        // create a new row for each book.
+        // Create a new row for each book.
         rows.forEach(row => {
             let id = row.id,
                 title = row.title,
@@ -155,46 +138,43 @@ $(function() {
                 row.page, 
                 row.pageTotal
             );
-
+            // Cache the id of the row and the row's text for faster searching. 
             cachedRowText.push({
                 id: '#' + createRowID(id), 
                 text: [title, authors, genres, date].join(' ').toLowerCase()
             });
         });
+        // Append the rows to the table all at once.
         bookTable.find("tbody").append(rowElements);
-        // sort the rows by title ascending.
+        // Sort the rows by title ascending.
         sortTableByColumn(bookTable, 1);
-        // update the number of books listed.
-        updateBookCount(rows.length);
-        updateCompletedBookCount();
     });
 
-    // Hide rows that do not match the search terms.
+    // When the search input is changed, hide rows that do not 
+    // match all of the search terms.
     $("#search-input").on("input", function() {
-        // get the search query.
+        // Get the search query from the input.
         const searchQuery = $(this).val().toLowerCase().trim().split(" ");
-
+        // Check if each row contains all of the search terms.
         for (let i = 0; i < cachedRowText.length; i++) {
             let cachedRow = cachedRowText[i];
             let row = $(cachedRow.id);
             let compareText = cachedRow.text;
 
             if (!searchQuery.every(term => compareText.includes(term))) {
-                // hide if the row does not contain the search query.
+                // Hide the row if it does not contain the search term.
                 row.toggleClass("hidden", true);
                 continue;
             }
-            // show rows by default.
+            // Show the row by default.
             row.toggleClass("hidden", false);
         }
     });
 
-    // Sort a column when its header is clicked.
+    // Sort the table by a column when that column's header is clicked.
     $(".sortable-table").on("click", ".sortable", function() {
-        // get the index of the column and its parent table.
         const table = $(this).parents("table").eq(0);
         const columnIndex = $(this).index();
-        // sort the table by column.
         sortTableByColumn(table, columnIndex);
     });
 

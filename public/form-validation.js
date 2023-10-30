@@ -1,6 +1,6 @@
 /**
  * Verifies that the text content matches an accepted format.
- * @param {Array} columnTypes An array of strings representing the column type 
+ * @param {Array} columnTypes   An array of strings representing the column type 
  * corresponding to the elements in columnContent.
  * @param {Array} columnContent An array of strings representing the text in each 
  * column that should be checked.

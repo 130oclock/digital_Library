@@ -10,52 +10,51 @@
     align-items: start;
 }
 
-.full-width {
-    grid-column: 1 / 5;
-}
-
-.form-section {
+.form-grid-item {
     display: flex;
     flex-flow: column nowrap;
+}
+
+.full-width {
+    grid-column: 1 / 5;
 }
 
 .hidden {
     visibility: collapse;
 }
 
-.tags-input {
-    display: inline-block;
-    position: relative;
-    margin: 0;
-    padding: 8px 12px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-bottom: 2px solid var(--accent-color);
-    box-shadow: 0px 0px 5px 0px var(--shadow-color);
+
+
+.tag-input input[type=text] {
+    margin-bottom: 20px;
 }
 
-.tags-input ul {
+.tag-input ul {
     list-style: none;
-    padding: 0;
-    margin: 0;
+    padding: 0px;
+    margin: 0px;
 }
 
-.tags-input li {
+.tag-input li {
     display: inline-block;
     background-color: #f2f2f2;
     color: #333;
-    /*border-radius: 20px;*/
     padding: 5px 10px;
     margin-right: 5px;
     margin-bottom: 5px;
 }
 
-.tags-input li.is-new {
+.tag-input small {
+    margin-top: 20px;
+    color: #777;
+}
+
+.tag-input li.is-new {
     /*background-color: #bdeec4;*/
     position: relative;
 }
 
-.tags-input li.is-new::after {
+.tag-input li.is-new::after {
     content: "New";
     position : absolute;
     top: 0px;
@@ -65,17 +64,7 @@
     transform: rotateY(0deg) rotate(-45deg);
 }
 
-.tags-input input[type=text] {
-    box-sizing: border-box;
-    width: 100%;
-    border: none;
-    outline: none;
-    padding: 5px;
-    background-color: none;
-    box-shadow: none;
-}
-
-.tags-input .delete-button {
+.tag-input .delete-button {
     background-color: transparent;
     border: none;
     box-shadow: none;
@@ -87,7 +76,7 @@
     font-size: 1em;
 }
 
-.tags-input .delete-button:after {
+.tag-input .delete-button:after {
     content: "\26CC";
 }
 
@@ -121,19 +110,4 @@
 
 .name-input-row .delete-button:after {
     content: "\26CC";
-}
-
-.alert-text {
-    font-size: smaller;
-    color: black;
-    background-color: pink;
-    border: 1px solid red;
-    opacity: 0.5;
-    padding: 4px 8px;
-    margin-top: 8px;
-    margin-bottom: 5px;
-}
-
-.alert-text:empty {
-    display: none;
 }

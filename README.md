@@ -21,15 +21,16 @@ This project is a Node.js digital library that tracks books and reading activity
 - Add more style
 - Add dark mode
 - Add json export feature
-- Add genre enumeration
 - Add table of book series
 
-- Create a new page for adding books instead of a popup form
 - Create a page for each row which can be used to edit
 - Add button to mark selection of books as completed
     - Set the page to the total pages for each book
-
 - Improve search terms
+- Add form validation
+- Automatically convert text to tag when clicking off form
+- Fix bug with deleteing tags when pressing enter
+
 
 ## Install
 - Clone the repository
