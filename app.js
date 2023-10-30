@@ -17,7 +17,7 @@ async function fetchConn() {
     return conn;
 }
 
-const hostname = process.env.PUBLISH ? process.env.LOCALHOST : process.env.IP_ADDRESS;
+const hostname = process.env.PUBLISH === 'true' ? process.env.IP_ADDRESS : process.env.LOCALHOST;
 const port = process.env.DEV_PORT;
 
 app.use(express.static(__dirname));
@@ -171,25 +171,48 @@ app.get('/authors/all', async (req, res) => {
     }
 });
 
-/*app.post('/add-book', async (req, res) => {
-    const insert = "INSERT INTO books (title, author, genre, date, total_pages) VALUES (?, ?, ?, ?, ?)";
+app.post('/add-book', async (req, res) => {
     const data = req.body;
-    console.log("POST /add-book:", data.title, data.author, data.genre, data.date, data.pages);
+    const authors = JSON.parse(data.authors);
+    const genres = JSON.parse(data.genres);
+    console.log("POST /add-book:", data.title, data.date, data.totalPages, authors, genres);
 
     let conn;
     try {
         conn = await fetchConn();
-        await conn.query(insert, [data.title, data.author, data.genre, data.date, data.pages]);
-        let newRowID = await conn.query("SELECT LAST_INSERT_ID()");
+        // insert a new book into the books table
+        const insertBook = "INSERT INTO books (title, published_date, total_pages) VALUES (?, ?, ?)";
+        await conn.query(insertBook, [data.title, data.date, data.totalPages]);
+        // get the id of the book
+        let newBookID = await conn.query("SELECT LAST_INSERT_ID()");
+        newBookID = newBookID[0]["LAST_INSERT_ID()"];
+        // insert a new junction into the book_authors table for each author
+        const insertBookAuthor = "INSERT INTO book_authors (book_id, author_id) VALUES (?, ?)";
+        const insertNewAuthor = "INSERT INTO authors (first_name, middle_name, last_name) VALUES (?, ?, ?)";
+        const insertBookNewAuthor = "INSERT INTO book_authors (book_id, author_id) VALUES (?, LAST_INSERT_ID())";
+        for (let i = 0; i < authors.length; i++) {
+            let author = authors[i];
+            if (typeof author === 'object') {
+                await conn.query(insertNewAuthor, [author.first, author.middle, author.last]);
+                await conn.query(insertBookNewAuthor, [newBookID]);
+                continue;
+            }
+            await conn.query(insertBookAuthor, [newBookID, author]);
+        }
+        // insert a new junction into the book_genres table for each genre
+        const insertBookGenre = "INSERT INTO book_genres (book_id, genre_id) VALUES (?, ?)";
+        for (let i = 0; i < genres.length; i++) {
+            await conn.query(insertBookGenre, [newBookID, genres[i]]);
+        }
 
-        res.status(200).send(`{"id":"${parseInt(newRowID[0]['LAST_INSERT_ID()']).toString()}"}`);
+        res.status(200).send({ "redirect": '/'});
     } catch (err) {
         res.sendStatus(408);
         throw err;
     } finally {
         if (conn) conn.end();
     }
-});*/
+});
 
 /*app.post('/edit-data', async (req, res) => {
     const data = req.body;
@@ -256,6 +279,28 @@ app.post('/delete-books', async (req, res) => {
         if (conn) conn.end();
     }
 });
+
+// Add all genres to the database.
+/*var fs = require("fs");
+fs.readFile(__dirname + '/public/lists/genres.json', async function(err, data) {
+    let genres = JSON.parse(data);
+    const query = "INSERT INTO genres (genre_id, genre_name) VALUES (?, ?)";
+    let conn;
+    try {
+        conn = await fetchConn();
+        for (let i = 0; i < genres.length; i++) {
+            let genre = genres[i];
+            conn.query(query, [genre.id, genre.name], function() {
+                console.log(genre.id, genre.name);
+            });
+        }
+
+    } catch (err) {
+        throw err;
+    } finally {
+        if (conn) conn.end();
+    }
+});*/
 
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);

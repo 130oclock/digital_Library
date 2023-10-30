@@ -68,6 +68,12 @@ tbody tr.deleted {
     transition-duration: 0.2s;
 }
 
+.sortable-table td div {
+    white-space: nowrap;
+    overflow: hidden;         
+    text-overflow: ellipsis;
+}
+
 .sortable-table tr th:first-of-type,
 .sortable-table tr td:first-of-type {
     padding: 0 8px;

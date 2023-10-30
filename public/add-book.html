@@ -18,11 +18,11 @@
         <main class="main">
             <div class="centered panel-wrapper">
                 <div class="panel">
-                    <form action="/add-book" method="post" id="add-book-form" class="form-container" style="min-height: 300px;">
+                    <form action="/add-book" method="post" id="add-book-form" class="form-container">
                         <label for="form-book-title">Title</label>
-                        <input type="text" name="title" id="form-book-title" autocomplete="off">
+                        <input type="text" name="title" id="form-book-title" autocomplete="off" required>
                         <label for="form-book-date">Date</label>
-                        <input type="date" name="date" id="form-book-date" autocomplete="off">
+                        <input type="date" name="date" id="form-book-date" autocomplete="off" required>
                         <label for="form-book-author">Author(s)</label>
                         <div class="form-section">
                             <div id="author-tags-input" class="tags-input">
@@ -32,7 +32,7 @@
                                 <div class="alert-text"></div>
                                 <datalist id="authors-list"></datalist>
                             </div>
-                            <div id="new-authors" class="hidden new-tags">Add Author
+                            <div id="new-authors" class="hidden new-tags">Add New Author
                                 <div class="name-input-row">
                                     <label for="new-author-first">First Name</label>
                                     <label for="new-author-middle">Middle Name</label>
@@ -47,10 +47,10 @@
                         </div>
                         <label for="form-book-pages">Total Pages</label>
                         <input type="number" name="pages" id="form-book-pages" min="1" max="30000" 
-                            placeholder="342" autocomplete="off">
+                            placeholder="342" autocomplete="off" required>
                         <label for="form-book-genre">Genre(s)</label>
                         <div id="genre-tags-input" class="tags-input">
-                            <ul id="author-tags" class="tag-container"></ul>
+                            <ul id="genre-tags" class="tag-container"></ul>
                             <input type="text" name="genre" id="form-book-genre" list="genres-list"
                                 placeholder="Fiction, Fantasy, Mystery..." autocomplete="off">
                             <div class="alert-text"></div>

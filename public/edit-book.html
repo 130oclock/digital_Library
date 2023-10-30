@@ -4,11 +4,67 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="public/styles/styles.css" />
-        <title>Digital Library</title>
+        <link rel="stylesheet" type="text/css" href="public/styles/form-styles.css" />
+        <link rel="icon" href="/public/images/favicon.ico" />
         <script src="node_modules/jquery/dist/jquery.js"></script>
+        <title>Digital Library</title>
     </head>
     <body>
+        <header class="header">
+            <div style="text-align: center;">
+                <h1>Edit a Book</h1>
+            </div>
+        </header>
+        <main class="main">
+            <div class="centered panel-wrapper">
+                <div class="panel">
+                    <form action="/edit-book" method="post" id="edit-book-form" class="form-container">
+                        <label for="form-book-title">Title</label>
+                        <input type="text" name="title" id="form-book-title" autocomplete="off">
+                        <label for="form-book-date">Date</label>
+                        <input type="date" name="date" id="form-book-date" autocomplete="off">
+                        <label for="form-book-author">Author(s)</label>
+                        <div class="form-section">
+                            <div id="author-tags-input" class="tags-input">
+                                <ul id="author-tags" class="tag-container"></ul>
+                                <input type="text" name="author" id="form-book-author" list="authors-list" 
+                                    placeholder="Full name" autocomplete="off">
+                                <div class="alert-text"></div>
+                                <datalist id="authors-list"></datalist>
+                            </div>
+                            <div id="new-authors" class="hidden new-tags">Add New Author
+                                <div class="name-input-row">
+                                    <label for="new-author-first">First Name</label>
+                                    <label for="new-author-middle">Middle Name</label>
+                                    <label for="new-author-last">Last Name</label>
+                                    <button id="hide-new-author" class="delete-button"></button>
+                                    <input id="new-author-first" type="text" placeholder="First name">
+                                    <input id="new-author-middle" type="text" placeholder="Middle name">
+                                    <input id="new-author-last" type="text" placeholder="Last name">
+                                    <button id="add-new-author">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                        <label for="form-book-pages">Total Pages</label>
+                        <input type="number" name="pages" id="form-book-pages" min="1" max="30000" 
+                            placeholder="342" autocomplete="off">
+                        <label for="form-book-genre">Genre(s)</label>
+                        <div id="genre-tags-input" class="tags-input">
+                            <ul id="genre-tags" class="tag-container"></ul>
+                            <input type="text" name="genre" id="form-book-genre" list="genres-list"
+                                placeholder="Fiction, Fantasy, Mystery..." autocomplete="off">
+                            <div class="alert-text"></div>
+                            <datalist id="genres-list"></datalist>
+                        </div>
+                        <button type="submit" class="btn full-width">Edit Book</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+        <footer class="footer">
 
+        </footer>
     </body>
-    <script src="public/edit-book.js"></script>
+    <script src="public/form-validation.js"></script>
+    <script src="public/add-book.js"></script>
 </html>

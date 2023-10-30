@@ -1,11 +1,12 @@
 .form-container {
     width: 100%;
     font-size: 0.9em;
+    min-height: 0px;
 
     display: grid;
-    grid-template-columns: auto minmax(0, 4fr) auto 2fr;
-    grid-template-rows: auto 1fr auto auto;
-    grid-gap: 16px;
+    grid-template-columns: auto 4fr auto 2fr;
+    grid-template-rows: auto;
+    gap: 30px 16px;
     align-items: start;
 }
 
@@ -27,6 +28,7 @@
     position: relative;
     margin: 0;
     padding: 8px 12px;
+    background-color: white;
     border: 1px solid #ccc;
     border-bottom: 2px solid var(--accent-color);
     box-shadow: 0px 0px 5px 0px var(--shadow-color);
@@ -42,10 +44,25 @@
     display: inline-block;
     background-color: #f2f2f2;
     color: #333;
-    border-radius: 20px;
+    /*border-radius: 20px;*/
     padding: 5px 10px;
     margin-right: 5px;
     margin-bottom: 5px;
+}
+
+.tags-input li.is-new {
+    /*background-color: #bdeec4;*/
+    position: relative;
+}
+
+.tags-input li.is-new::after {
+    content: "New";
+    position : absolute;
+    top: 0px;
+    left: -5px;
+    font-size: 0.8em;
+    Color: green;
+    transform: rotateY(0deg) rotate(-45deg);
 }
 
 .tags-input input[type=text] {
@@ -75,7 +92,8 @@
 }
 
 .new-tags {
-    padding: 8px 12px;
+    padding: 8px 4px;
+    margin-top: 8px;
 }
 
 .name-input-row {
@@ -107,5 +125,15 @@
 
 .alert-text {
     font-size: smaller;
-    color: red;
+    color: black;
+    background-color: pink;
+    border: 1px solid red;
+    opacity: 0.5;
+    padding: 4px 8px;
+    margin-top: 8px;
+    margin-bottom: 5px;
+}
+
+.alert-text:empty {
+    display: none;
 }

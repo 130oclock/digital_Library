@@ -11,35 +11,20 @@ function findItemsWithName(list, name) {
 }
 
 /**
- * 
- * @param {Event} event 
- * @param {string} input 
- * @param {Array} cache 
- * @param {string} alertText 
- * @param {Function} alertCall 
- * @returns 
+ * Adds a tag with text inside of a tag input field.
+ * @param {Object} tagField The tag input field DOM element.
+ * @param {string} tagContent The string to go inside the tag.
+ * @returns The tag's DOM element.
  */
-function tagInputEntry(event, input, cache, alertText, alertCall = null) {
-    const code = event.keyCode || event.which;
-    if (code == 13) {
-        event.preventDefault();
-        const tagContent = input.val().trim();
-        const tagInput = input.parent();
-        if (tagContent === "") return;
-        if (findItemsWithName(cache, tagContent) === -1) {
-            // notify that the author does not match.
-            tagInput.find(".alert-text").text(`"${ tagContent }" ${ alertText }`);
-            if (alertCall) alertCall(tagContent);
-            return;
-        }
-        tagInput.find(".alert-text").text("");
+function addTag(tagField, tagContent) {
+    tagField.find(".alert-text").text("");
 
-        const tag = `<li>${ tagContent }
-                    <button class="delete-button"></button>
-                    </li>`;
-        tagInput.children("ul").append(tag);
-        input.val("");
-    }
+    const tag = `<li>${ tagContent }
+                <button class="delete-button"></button>
+                </li>`;
+    const tagElement = $(tag);
+    tagField.children("ul").append(tagElement);
+    return tagElement;
 }
 
 /**
@@ -50,10 +35,13 @@ function tagInputEntry(event, input, cache, alertText, alertCall = null) {
  */
 function splitFullName(fullName) {
     const parts = fullName.split(" ");
-    if (parts.length === 3) {
+    const count = parts.length;
+    if (count === 3) {
         return [parts[0], parts[1], parts[2]];
+    } else if (count=== 2) {
+        return [parts[0], "", parts[1]];
     }
-    return [parts[0], "", parts[1]];
+    return count;
 }
 
 var cachedAuthorNames = new Array();
@@ -88,22 +76,87 @@ $(function() {
 
     $("#author-tags-input").on("keydown", "input", function(event) {
         const input = $(this);
-        tagInputEntry(event, input, cachedAuthorNames, "is not a known author. Would you like to add them?", function(value) {
-            let name = splitFullName(value);
-            $("#new-authors").find("input").each(function(index) {
-                $(this).val(name[index]);
-            }).end().toggleClass("hidden", false);
-        });
+        const code = event.keyCode || event.which;
+        if (code === 13) {
+            event.preventDefault();
+            // get elements.
+            const tagContent = input.val().trim();
+            const tagField = input.parent();
+            const alert = tagField.find(".alert-text");
+            // check if the author exists in database.
+            if (tagContent === "") return;
+            if (findItemsWithName(cachedAuthorNames, tagContent) === -1) {
+                // check the format of the author name.
+                let name = splitFullName(tagContent);
+                if (name < 2) {
+                    alert.text("ERROR: Must include at least first and last name.");
+                    return;
+                } else if (name > 3) {
+                    alert.text("ERROR: Cannot search for more than one name at a time.");
+                    return;
+                }
+                // notify that the author does not match.
+                alert.text("ALERT: This is not a known author. Try again or add a new author.");
+                $("#new-authors").find("input").each(function(index) {
+                    $(this).val(name[index]);
+                }).end().toggleClass("hidden", false);
+                return;
+            }
+            // clear the inputs and add the tag.
+            alert.text("");
+            input.val("");
+            addTag(tagField, tagContent);
+        }
     });
 
-    $("#hide-new-author").on("click", function() {
-        $(this).parent().parent().toggleClass("hidden", true);
-        $("#author-tags-input").find("input").val("");
-    })
+    $("#hide-new-author").on("click", function(event) {
+        event.preventDefault();
+        const tagField = $("#author-tags-input");
+
+        $("#new-authors").toggleClass("hidden", true);
+        tagField.find("input").val("");
+        tagField.find(".alert-text").text("");
+    });
+
+    $("#add-new-author").on("click", function(event) {
+        event.preventDefault();
+        const first = $("#new-author-first").val().trim(), 
+              middle = $("#new-author-middle").val().trim(), 
+              last = $("#new-author-last").val().trim();
+        const tagContent = [first, middle, last].join(" ");
+        const tagField = $("#author-tags-input");
+
+        $("#new-authors").toggleClass("hidden", true);
+        tagField.find("input").val("");
+        tagField.find(".alert-text").text("");
+        let tag = addTag(tagField, tagContent);
+        tag.addClass("is-new")
+           .data("first", first)
+           .data("middle", middle)
+           .data("last", last);
+    });
 
     $("#genre-tags-input").on("keydown", "input", function(event) {
         const input = $(this);
-        tagInputEntry(event, input, cachedGenreNames, "is not a valid genre.");
+        const code = event.keyCode || event.which;
+        if (code == 13) {
+            event.preventDefault();
+            // get elements.
+            const tagContent = input.val().trim();
+            const tagField = input.parent();
+            const alert = tagField.find(".alert-text");
+            // check if the genre exists in database.
+            if (tagContent === "") return;
+            if (findItemsWithName(cachedGenreNames, tagContent) === -1) {
+                // notify that the genre does not match.
+                alert.text("ALERT: This is not a valid genre. Try again.");
+                return;
+            }
+            // clear the inputs and add the tag.
+            alert.text("");
+            input.val("");
+            addTag(tagField, tagContent);
+        }
     });
 
     $(".tags-input").on("click", ".delete-button", function(event) {
@@ -120,27 +173,48 @@ $(function() {
         event.preventDefault();
         // get the content in the form.
         const title = $("#form-book-title").val(), date = $("#form-book-date").val(),
-            pages = $("#form-book-pages").val();
+            totalPages = $("#form-book-pages").val();
 
         // get the author ids.
         const authors = $("#author-tags").find("li").map(function() {
-            return getAuthorFromName(cachedAuthorNames, $(this).text().trim());
+            let tag = $(this);
+            if (tag.hasClass("is-new")) {
+                let first = tag.data("first"), 
+                    middle = tag.data("middle"), 
+                    last = tag.data("last");
+
+                middle = middle ? middle : '';
+                return `{ "first": "${ first }", "middle": "${ middle }", "last": "${ last }"}`;
+            }
+            return findItemsWithName(cachedAuthorNames, tag.text().trim()).id;
         }).get();
+
+        const genres = $("#genre-tags").find("li").map(function() {
+            let tag = $(this);
+            return findItemsWithName(cachedGenreNames, tag.text().trim()).id;
+        }).get();
+
+        if (authors.length === 0 || genres.length === 0) return;
     
         // validate that the form content is in the right format.
         if (!validateTextFormat(["title", "date", "pages"], 
-                              [title, date, pages])) {
+                              [title, date, totalPages])) {
             return false;
         }
 
+        const dataString = `title=${ title }&date=${ date }&totalPages=${ totalPages }&` +
+                `authors=[${ authors.toString() }]&genres=[${ genres.toString() }]`;
+
         // send a POST request to the server to add a new row.
-        /*$.ajax({
+        $.ajax({
             type: "POST",
             url: "/add-book",
             data: dataString,
             success: function(res) {
-                
-            }
-        });*/
+                if (typeof res.redirect === 'string')
+                    window.location = res.redirect;
+            },
+            dataType: 'json' 
+        });
     });
 });
