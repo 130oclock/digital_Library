@@ -1,5 +1,7 @@
 # Digital Library Using Node.js and MariaDB
-## A project to learn database management and AJAX in a practical context.
+
+> A project to learn database management and AJAX in a practical context.
+
 This project is a Node.js digital library that tracks books and reading activity. It uses a MariaDB database to store information about the books such as title, author, genre, and publication date. The website provides a user friendly interface to add, edit, or delete books from the database.
 
 - Create a MariaDB database
@@ -31,8 +33,8 @@ This project is a Node.js digital library that tracks books and reading activity
 - Automatically convert text to tag when clicking off form
 - Fix bug with deleteing tags when pressing enter
 
-
 ## Install
+
 - Clone the repository
 ```bash
 git clone https://github.com/130oclock/digital_Library
@@ -58,7 +60,7 @@ node app.js
 ```
 - Navigate to `http://localhost:3000`
 
-## Example .env
+### Example .env
 
 ```ini
 # Environment variables
@@ -74,4 +76,14 @@ DB_HOST     ="localhost" # The ip address of the db host
 DB_USER     ="<username>"
 DB_PASS     ="<password>"
 DB_NAME     ="<database_name>"
+```
+
+## Testing
+
+This project uses **[Jest.js](https://jestjs.io)** for its unit testing.
+All test files are in the `./tests` directory.
+
+Run all test suites
+```
+npm test
 ```

@@ -6,7 +6,7 @@
  * @param {Number} b The blue value.
  * @returns A string in the format "rgb(r, g, b)".
  */
-function colorToString(r, g, b) {
+export function colorToString(r, g, b) {
     return `rgb(${ r },${ g },${ b })`;
 }
 
