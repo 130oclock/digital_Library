@@ -1,3 +1,5 @@
+import { validateTitle, validateDate, validateTotalPages, validateAuthors, validateGenres } from "./modules/form-validation.js";
+
 /**
  * Find the first object in the array that has a matching name.
  * Returns -1 if no objects are found.

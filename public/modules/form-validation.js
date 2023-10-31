@@ -1,4 +1,4 @@
-function validateTitle(value, field) {
+export function validateTitle(value, field) {
     if (!value) {
         field.find(".error-text").text("Please add a title");
         return false;
@@ -6,7 +6,7 @@ function validateTitle(value, field) {
     return true;
 }
 
-function validateDate(value, field) {
+export function validateDate(value, field) {
     if (!value) {
         field.find(".error-text").text("Please select a date");
         return false;
@@ -14,7 +14,7 @@ function validateDate(value, field) {
     return true;
 }
 
-function validateAuthors(values, field) {
+export function validateAuthors(values, field) {
     if (values.length === 0) {
         field.find(".error-text").text("Please add the number of pages");
         return false;
@@ -22,7 +22,7 @@ function validateAuthors(values, field) {
     return true;
 }
 
-function validateGenres(values, field) {
+export function validateGenres(values, field) {
     if (values.length === 0) {
         field.find(".error-text").text("Please add an author");
         return false;
@@ -30,7 +30,7 @@ function validateGenres(values, field) {
     return true;
 }
 
-function validateTotalPages(value, field) {
+export function validateTotalPages(value, field) {
     if (!value) {
         field.find(".error-text").text("Please add a genre");
         return false;
