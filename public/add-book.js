@@ -39,6 +39,14 @@ function getTagIds(tagField) {
 }
 
 /**
+ * Removes all tags from an input field.
+ * @param {HTMLElement} tagField The div containing the tags.
+ */
+function removeTags(tagField) {
+    tagField.find("li").remove();
+}
+
+/**
  * Handles input from a tag input element. Checks if the input text matches
  * a cached value and adds the tag if it exists.
  * @param {HTMLElement} input   The tag input element.
@@ -51,7 +59,10 @@ function tagInputHandler(input, cachedList, noMatch, validate = null) {
     const field = input.parent();
 
     // Check if the input exists in database.
-    if (content === "") return;
+    if (content === "") {
+        field.find(".error-text").text("");
+        return -1;
+    }
     const match = findItemsWithName(cachedList, content);
     if (match === -1) {
         // Do something if there is no match...
@@ -71,6 +82,7 @@ function tagInputHandler(input, cachedList, noMatch, validate = null) {
         return 0;
     }
     
+    field.find(".error-text").text("");
     // Add the tag.
     addTag(field, content, match.id);
     return 0;
@@ -126,6 +138,7 @@ $(function() {
     const authorError = function(error, field, content) {
         switch(error) {
             case 404: // Check if they want to add a new author.
+                field.find(".error-text").text(`"${ content }" is not a known author`);
                 break;
         }
     };
@@ -133,10 +146,10 @@ $(function() {
     const authorValid = function(field, content) {
         let name = splitFullName(content);
         if (name < 2) {
-            alert("ERROR: Must include at least first and last name.");
+            field.find(".error-text").text("Must include at least first and last name");
             return false;
         } else if (name > 3) {
-            alert("ERROR: Cannot search for more than one name at a time.");
+            field.find(".error-text").text("Cannot search for more than one name at a time");
             return false;
         }
         return true;
@@ -216,9 +229,10 @@ $(function() {
            .data("last", last);
     });*/
 
-    const genreError = function(error, field, ontent) {
+    const genreError = function(error, field, content) {
         switch(error) {
             case 404: // Add an error message.
+                field.find(".error-text").text(`"${ content }" is not a valid genre`);
                 break;
         }
     };
@@ -245,42 +259,37 @@ $(function() {
 
     // Change the default behaviour of the form submit 
     // so that it does not reload the page.
-    /*$("#add-book-form").on("submit", function(event) {
+    $("#add-book-form").on("submit", function(event) {
         event.preventDefault();
-        // get the content in the form.
-        const title = $("#form-book-title").val(), date = $("#form-book-date").val(),
-            totalPages = $("#form-book-pages").val();
+        // Get the content from the form.
+        const title = $("#title").val().trim(), 
+              date = $("#date").val().trim(),
+              totalPages = $("#pages").val().trim(),
+              authors = getTagIds($("#author-tags")),
+              genres = getTagIds($("#genre-tags"));
+        const form = $(this);
+        form.find(".error-text").text("");
+        let valid = true;
+        if (!validateTitle(title, $("#title").parent()))
+            valid = false;
+        if (!validateDate(date, $("#date").parent()))
+            valid = false;
+        if (!validateTotalPages(totalPages, $("#pages").parent()))
+            valid = false;
+        if (!validateAuthors(authors, $("#author-tags")))
+            valid = false;
+        if (!validateGenres(genres, $("#genre-tags")))
+            valid = false;
 
-        // get the author ids.
-        const authors = $("#author-tags").find("li").map(function() {
-            let tag = $(this);
-            if (tag.hasClass("is-new")) {
-                let first = tag.data("first"), 
-                    middle = tag.data("middle"), 
-                    last = tag.data("last");
-
-                middle = middle ? middle : '';
-                return `{ "first": "${ first }", "middle": "${ middle }", "last": "${ last }"}`;
-            }
-            return findItemsWithName(cachedAuthorNames, tag.text().trim()).id;
-        }).get();
-
-        const genres = $("#genre-tags").find("li").map(function() {
-            let tag = $(this);
-            return findItemsWithName(cachedGenreNames, tag.text().trim()).id;
-        }).get();
-
-        if (authors.length === 0 || genres.length === 0) return;
-    
-        // validate that the form content is in the right format.
-        if (!validateTextFormat(["title", "date", "pages"], 
-                              [title, date, totalPages])) {
-            return false;
+        if (!valid) {
+            console.log("invalid form");
+            return;
         }
 
         const dataString = `title=${ title }&date=${ date }&totalPages=${ totalPages }&` +
                 `authors=[${ authors.toString() }]&genres=[${ genres.toString() }]`;
-
+        console.log(dataString);
+        /*
         // send a POST request to the server to add a new row.
         $.ajax({
             type: "POST",
@@ -291,6 +300,6 @@ $(function() {
                     window.location = res.redirect;
             },
             dataType: 'json' 
-        });
-    });*/
+        });*/
+    });
 });

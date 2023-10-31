@@ -10,7 +10,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/130oclock/digital_Library/issues"
   },
-  "homepage": "https://github.com/130oclock/digital_Library#readme"
+  "homepage": "https://github.com/130oclock/digital_Library#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
