@@ -33,7 +33,7 @@ app.get('/add-book', (req, res) => {
 });
 
 app.get('/genres', (req, res) => {
-    res.sendFile(__dirname + '/public/lists/genres.json');
+    res.sendFile(__dirname + '/public/json/genres.json');
 });
 
 app.get('/books/all', async (req, res) => {
@@ -43,9 +43,9 @@ app.get('/books/all', async (req, res) => {
     SELECT
         books.book_id AS id,
         books.title AS title,
-        books.page AS page,
+        books.page AS pageCurrent,
         books.total_pages AS pageTotal,
-        books.published_date AS date,
+        DATE_FORMAT(books.published_date, '%Y-%m-%d') AS date,
         authors_ AS authors,
         genres_ AS genres
     FROM books
@@ -99,9 +99,9 @@ app.get('/books/:id', async (req, res) => {
     SELECT
         books.book_id AS id,
         books.title AS title,
-        books.page AS page,
+        books.page AS pageCurrent,
         books.total_pages AS pageTotal,
-        books.published_date AS date,
+        DATE_FORMAT(books.published_date, '%Y-%m-%d') AS date,
         authors_ AS authors,
         genres_ AS genres
     FROM books

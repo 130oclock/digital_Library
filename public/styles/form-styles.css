@@ -52,9 +52,8 @@ small.error-text:empty {
     color: #333;
     box-shadow: 0px 0px 5px 0px var(--shadow-color);
 }
-
+/*
 .tag-input li.is-new {
-    /*background-color: #bdeec4;*/
     position: relative;
 }
 
@@ -66,7 +65,7 @@ small.error-text:empty {
     font-size: 0.8em;
     Color: green;
     transform: rotateY(0deg) rotate(-45deg);
-}
+}*/
 
 .tag-input .delete-button {
     margin-left: 3px;
@@ -82,7 +81,7 @@ small.error-text:empty {
 .tag-input .delete-button:after {
     content: "\26CC";
 }
-
+/*
 .new-tags {
     padding: 8px 4px;
     margin-top: 8px;
@@ -113,4 +112,4 @@ small.error-text:empty {
 
 .name-input-row .delete-button:after {
     content: "\26CC";
-}
+}*/
