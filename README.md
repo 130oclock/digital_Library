@@ -81,7 +81,7 @@ DB_NAME     ="<database_name>"
 ## Testing
 
 This project uses **[Jest.js](https://jestjs.io)** for its unit testing.
-All test files are in the `./tests` directory.
+All test files are in the `__tests__/` directory.
 
 Run all test suites
 ```

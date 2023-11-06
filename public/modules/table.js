@@ -1,62 +1,17 @@
-import { getProgressColor } from "./color.js";
-import { formatDate } from "./form-validation.js";
+/**
+ * Implements functions related to HTML table manipulation.
+ * 
+ * @file  This file defines table related functions.
+ * @since 0.0.1
+ */
 
 /**
  * Generates a standardized unique ID for each row.
  * @returns A string containing the id of the row element.
  */
 var __runningId = 0;
-export function getRowId() {
+export default function getRowId() {
     return `row-${ __runningId++ }`;
-}
-
-/**
- * Formats the data from a book and creates a string containing HTML.
- * @param {String} rowId The unique id generated for this row.
- * @param {Object} book The book object from the database.
- * @returns A string containing the HTML elements for a row.
- */
-export function bookToRow(rowId, book) {
-    let current = book.pageCurrent,
-        total = book.pageTotal;
-    let progress = (total !== 0 && current === total) ? "read-all" : "";
-    return `
-    <tr id="${ rowId }" data-index="${ book.id }">
-        <td><input type="checkbox"></td>
-        <td><div column="title">${ book.title }</div></td>
-        <td><div column="author">${ book.authors }</div></td>
-        <td><div column="genre">${ book.genres }</div></td>
-        <td><div column="date">${ formatDate(book.date) }</div></td>
-        <td><div column="pages" class="page-count ${ progress }" 
-            style="background-color: ${ getProgressColor(current, total) }">
-        <span column="page">${ current }</span> / <span column="total_pages">${ total }</span>
-        </div></td>
-        <td><a href="/books/${ book.id }" class="edit-btn">
-            <i class='fa fa-pencil'></i>
-        </a></td>
-    </tr>`;
-}
-
-/**
- * Adds a row to the table for each book in the list.
- * @param {Array} books The array of book objects from the database.
- * @param {HTMLTableElement} table The table to add the rows to.
- * @param {Array} cache The cache of the book data for searching.
- */
-export function addBooksToTable(books, table, cache) {
-    let rowElements = "";
-
-    books.forEach(book => {
-        let rowId = getRowId();
-
-        rowElements += bookToRow(rowId, book);
-        cache.push({
-            id: '#' + rowId, 
-            text: [book.title, book.authors, book.genres].join(' ').toLowerCase()
-        });
-    });
-    // Append the rows to the table all at once.
-    table.find("tbody").append(rowElements);
 }
 
 /**
@@ -70,7 +25,7 @@ function getCellValue(row, index) {
 }
 
 /**
- * Sorts the rows of a table based on the content of a specific column.
+ * Sort the rows of a table alphanumerically based on the contents of a specific column.
  * @param {HTMLTableElement} table The table to be sorted.
  * @param {Number} column          The index of the column to sort by.
  */

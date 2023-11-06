@@ -3,38 +3,55 @@ export function validateTitle(value, field) {
         field.find(".error-text").text("Please add a title");
         return false;
     }
+    if(value.length > 100) {
+        field.find(".error-text").text("The title cannot be longer than 100 characters");
+        return false;
+    }
+    field.find(".error-text").text("");
     return true;
 }
 
 export function validateDate(value, field) {
     if (!value) {
-        field.find(".error-text").text("Please select a date");
+        field.find(".error-text").text("Please select the publication date");
         return false;
     }
+    if (!value.match(/^\d{4}-\d{2}-\d{2}/)) {
+        field.find(".error-text").text("Date must be YYYY-MM-DD format");
+        return false;
+    }
+    field.find(".error-text").text("");
     return true;
 }
 
 export function validateAuthors(values, field) {
     if (values.length === 0) {
-        field.find(".error-text").text("Please add the number of pages");
+        field.find(".error-text").text("Please add at least one author");
         return false;
     }
+    field.find(".error-text").text("");
     return true;
 }
 
 export function validateGenres(values, field) {
     if (values.length === 0) {
-        field.find(".error-text").text("Please add an author");
+        field.find(".error-text").text("Please add at least one genre");
         return false;
     }
+    field.find(".error-text").text("");
     return true;
 }
 
 export function validateTotalPages(value, field) {
     if (!value) {
-        field.find(".error-text").text("Please add a genre");
+        field.find(".error-text").text("Please count the total number of pages");
         return false;
     }
+    if (value > 30000) {
+        field.find(".error-text").text("There cannot be more than 30,000 pages in the book");
+        return false;
+    }
+    field.find(".error-text").text("");
     return true;
 }
 

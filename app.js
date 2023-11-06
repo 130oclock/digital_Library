@@ -39,8 +39,8 @@ app.get('/genres', (req, res) => {
 app.get('/books/all', async (req, res) => {
     // get all rows from the book table
     // and all genres and authors related to that book.
-    const request = `
-    SELECT
+    const request =
+    `SELECT
         books.book_id AS id,
         books.title AS title,
         books.page AS pageCurrent,
@@ -95,8 +95,8 @@ app.get('/books/all', async (req, res) => {
 app.get('/books/:id', async (req, res) => {
     // get all rows from the book table
     // and all genres and authors related to that book.
-    const request = `
-    SELECT
+    const request =
+    `SELECT
         books.book_id AS id,
         books.title AS title,
         books.page AS pageCurrent,
@@ -150,8 +150,8 @@ app.get('/books/:id', async (req, res) => {
 
 app.get('/authors/all', async (req, res) => {
     // get all rows from the author table
-    const request = `
-    SELECT
+    const request =
+    `SELECT
         authors.author_id AS id,
         CONCAT_WS(' ', first_name, middle_name, last_name) AS name
     FROM authors

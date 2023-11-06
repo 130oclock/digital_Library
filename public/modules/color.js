@@ -5,7 +5,7 @@
  * @since 0.0.1
  */
 
-export class Color {
+export default class Color {
     #r; 
     #g;
     #b;
@@ -53,20 +53,6 @@ export class Color {
     }
 }
 
-const LIGHT_GREY = new Color(231, 231, 231);
-const GREEN = new Color(138, 204, 138);
-const BLUE = new Color(91, 187, 31);
-
-/**
- * Calculates the percentage of the book that has been read and 
- * returns a color indicative of the progress.
- * @param {Number} pages     The number of pages read.
- * @param {Number} pageTotal The number of pages in the book.
- * @returns A string in the format "rgb(r, g, b)".
- */
-export function getProgressColor(pages, pageTotal) {
-    let percent = 0;
-    if (pageTotal !== 0) percent = pages / pageTotal;
-    
-    return Color.lerpColor(LIGHT_GREY, GREEN, percent).toString();
-}
+Color.LIGHT_GREY = new Color(231, 231, 231);
+Color.GREEN = new Color(138, 204, 138);
+//Color.BLUE = new Color(91, 187, 31);
